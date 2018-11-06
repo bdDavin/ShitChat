@@ -1,6 +1,9 @@
 package se.shitchat.shitchatapp;
 
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,14 +16,35 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+import se.shitchat.shitchatapp.fragments.MessageFragment;
+
 public class MainActivity extends AppCompatActivity {
+
+    //create fragment fields
+    private Fragment messageFragment;
+    private FragmentManager fragmentManager;
+    private FragmentTransaction fragmentTransaction;
+    FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //implements firestore database
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+        //creates fragment
+        messageFragment = new MessageFragment();
+
+        //fragment transaction
+        fragmentManager = getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.main_frame, messageFragment);
+        fragmentTransaction.commit();
+
+
 
         // Create a new user with a first and last name
         Map<String, Object> user = new HashMap<>();
@@ -53,6 +77,11 @@ public class MainActivity extends AppCompatActivity {
         int penis = 30;
         //LUNCH
 
-        //frameLayout = findViewById(R.id.main_frame).set;
+
+
+
+
     }
+
+    public FirebaseFirestore getDb() {return db;}
 }
