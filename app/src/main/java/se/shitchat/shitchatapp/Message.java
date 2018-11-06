@@ -6,17 +6,19 @@ import java.util.Date;
 
 public class Message {
 
-    //fields
+    //Fields
     private Date creationDate;
     private String message;
     private String id;
     //TODO add user that created message
 
-    //constructor
+
+    //Constructor (Firebase)
     public Message() {
     }
 
-    //getters/settters
+
+    //Getters/Setters
     public Date getCreationDate() {
         return creationDate;
     }
