@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         //hejsan alla hoppas detta funkar!!!
         //ni är alla gawadds
         //Göteborgs rapé
+        int penis = 30;
         
     }
 }
