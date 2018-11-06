@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         boolean push = true;
-        //penna
+        //hejsan fuckers
         //hejsan alla hoppas detta funkar!!!
         //ni är alla gawadds
     }
