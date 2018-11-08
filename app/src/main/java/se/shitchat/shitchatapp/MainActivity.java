@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                         }
                         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                        transaction.add(R.id.main_frame, selectedFragment);
+                        transaction.replace(R.id.main_frame, selectedFragment);
                         transaction.commit();
                         return true;
                     }
