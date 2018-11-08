@@ -1,12 +1,14 @@
 package se.shitchat.shitchatapp;
 
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -16,12 +18,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+import se.shitchat.shitchatapp.fragments.MainFragment;
 import se.shitchat.shitchatapp.fragments.MessageFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     //create fragment fields
     private Fragment messageFragment;
+    private Fragment mainFragment;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
     FirebaseFirestore db;
@@ -37,11 +41,13 @@ public class MainActivity extends AppCompatActivity {
 
         //creates fragment
         messageFragment = new MessageFragment();
+        mainFragment = new MainFragment();
+
 
         //fragment transaction
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.main_frame, messageFragment);
+        fragmentTransaction.add(R.id.main_frame, mainFragment);
         fragmentTransaction.commit();
 
 
@@ -68,20 +74,33 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+                findViewById(R.id.bottomNavigationView);
 
-        boolean push = true;
-        //hejsan fuckers
-        //hejsan alla hoppas detta funkar!!!
-        //ni är alla gawadds
-        //Göteborgs rapé
-        int penis = 30;
-        //LUNCH
+        bottomNavigationView.setOnNavigationItemSelectedListener
+                (new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        Fragment selectedFragment = null;
+                        switch (item.getItemId()) {
+                            case R.id.action_search:
+                                //TODO Search fragment
+                                //selectedFragment = ItemOneFragment.newInstance();
+                                break;
+                            case R.id.action_messages:
+                                selectedFragment = messageFragment;
+                                break;
+                        }
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.add(R.id.main_frame, selectedFragment);
+                        transaction.commit();
+                        return true;
+                    }
 
 
-
-
-
+                });
     }
+
 
     public FirebaseFirestore getDb() {return db;}
 }

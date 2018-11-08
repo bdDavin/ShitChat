@@ -3,6 +3,7 @@ package se.shitchat.shitchatapp.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,7 +18,7 @@ import se.shitchat.shitchatapp.R;
 public class MainFragment extends Fragment {
 
     private RecyclerView messageRecycler;
-
+    private FloatingActionButton newMessage;
 
     public MainFragment() {
         // Required empty public constructor
@@ -36,6 +37,7 @@ public class MainFragment extends Fragment {
 
         //getting recycle item
         messageRecycler = getActivity().findViewById(R.id.message_recycler);
+        newMessage = getActivity().findViewById(R.id.newMessage);
 
 
 

@@ -41,8 +41,8 @@ public class MessageFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         //set up guess button
-        guessButton = getActivity().findViewById(R.id.send_button);
-        guessButton.setOnClickListener((View v) -> guessButtonPressed(v));
+        //guessButton = getActivity().findViewById(R.id.send_button);
+        //guessButton.setOnClickListener((View v) -> guessButtonPressed(v));
 
     }
 
