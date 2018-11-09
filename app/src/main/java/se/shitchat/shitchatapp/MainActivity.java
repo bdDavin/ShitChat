@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         createLogInScreen();
 
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
