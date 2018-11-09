@@ -4,4 +4,8 @@
     <string name="search">Search</string>
     <string name="messages">Messages</string>
     <string name="logged_in_as">Logged in as </string>
+    <string name="log_out">Log out</string>
+    <string name="profile">Profile</string>
+    <string name="send_Button">Send</string>
+    <string name="message">Message</string>
 </resources>

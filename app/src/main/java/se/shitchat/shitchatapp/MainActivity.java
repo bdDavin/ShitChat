@@ -2,11 +2,15 @@ package se.shitchat.shitchatapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -18,8 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import se.shitchat.shitchatapp.fragments.MainFragment;
-
 public class MainActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 1337;
@@ -27,73 +29,57 @@ public class MainActivity extends AppCompatActivity {
     private Fragment mainFragment;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
+    private FloatingActionButton mainFab;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-
-    private String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setSupportActionBar(findViewById(R.id.mainToolbar));
 
         //implements firestore database
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
+        mainFab = findViewById(R.id.mainFab);
+
         createLogInScreen();
+
     }
-//        BottomNavigationView bottomNavigationView = (BottomNavigationView)
-//                findViewById(R.id.bottomNavigationView);
-//
-//        bottomNavigationView.setOnNavigationItemSelectedListener
-//                (new BottomNavigationView.OnNavigationItemSelectedListener() {
-//                    @Override
-//                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                        Fragment selectedFragment = null;
-//                        switch (item.getItemId()) {
-//                            case R.id.action_search:
-//                                //TODO Search fragment
-//                                //selectedFragment = ItemOneFragment.newInstance();
-//                                break;
-//                            case R.id.action_messages:
-//                                selectedFragment = messageFragment;
-//                                break;
-//                        }
-//                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//                        transaction.replace(R.id.main_frame, selectedFragment);
-//                        transaction.commit();
-//                        return true;
-//                    }
-//
-//
-//                });
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
-        public void createLogInScreen () {
+    public void createLogInScreen() {
 
-            if (mAuth.getCurrentUser() != null) {
-                // Choose authentication providers
-                List<AuthUI.IdpConfig> providers = Arrays.asList(
-                        new AuthUI.IdpConfig.EmailBuilder().build(),
-                        new AuthUI.IdpConfig.GoogleBuilder().build());
+        if (mAuth.getCurrentUser() == null) {
+            // Choose authentication providers
+            List<AuthUI.IdpConfig> providers = Arrays.asList(
+                    new AuthUI.IdpConfig.EmailBuilder().build(),
+                    new AuthUI.IdpConfig.GoogleBuilder().build());
 
-                // Create and launch sign-in intent
-                startActivityForResult(
-                        AuthUI.getInstance()
-                                .createSignInIntentBuilder()
-                                .setAvailableProviders(providers)
-                                .setIsSmartLockEnabled(false, true)
-                                .setLogo(R.mipmap.ic_launcher)
-                                .setTheme(R.style.CustomTheme)
-                                .build(),
-                        RC_SIGN_IN);
-            } else {
-                changeToMainFrag();
+            // Create and launch sign-in intent
+            startActivityForResult(
+                    AuthUI.getInstance()
+                            .createSignInIntentBuilder()
+                            .setAvailableProviders(providers)
+                            .setIsSmartLockEnabled(false, true)
+                            .setLogo(R.mipmap.ic_launcher)
+                            .setTheme(R.style.CustomTheme)
+                            .build(),
+                    RC_SIGN_IN);
+        } else {
 
-                showSignedInSnack();
-            }
+
+            showSignedInSnack();
         }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -115,39 +101,39 @@ public class MainActivity extends AppCompatActivity {
                 db.collection("users")
                         .document(userUid)
                         .set(user);
-                changeToMainFrag();
 
                 showSignedInSnack();
             } else {
-                Snackbar.make(findViewById(R.id.main_frame), "Log in failed, try again later",
+                Snackbar.make(findViewById(R.id.mainToolbar), "Log in failed, try again later",
                         Snackbar.LENGTH_LONG)
                         .show();
-                // Sign in failed. If response is null the user canceled the
-                // sign-in flow using the back button. Otherwise check
-                // response.getError().getErrorCode() and handle the error.
-
             }
         }
     }
 
     //En snackbar som vissar vem som är inloggad
     private void showSignedInSnack() {
-       Snackbar.make(findViewById(R.id.main_frame), getString(R.string.logged_in_as) + FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),
-               Snackbar.LENGTH_SHORT)
-               .show();
-    }
-
-    private void changeToMainFrag() {
-        //creates fragment
-        mainFragment = new MainFragment();
-        //fragment transaction
-        fragmentManager = getSupportFragmentManager();
-        fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.main_frame, mainFragment);
-        fragmentTransaction.commit();
+        Snackbar.make(findViewById(R.id.mainToolbar), getString(R.string.logged_in_as) + FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),
+                Snackbar.LENGTH_SHORT)
+                .show();
     }
 
     public FirebaseFirestore getDb() {
         return db;
+    }
+
+    public void newMessage(View view) {
+        Intent i = new Intent(this, MessageActivity.class);
+        startActivity(i);
+    }
+
+    public void enterProfile(MenuItem item) {
+        Intent i = new Intent(this, ProfileActivity.class);
+        startActivity(i);
+    }
+
+    public void logOut(MenuItem item) {
+        mAuth.signOut();
+        createLogInScreen();
     }
 }
