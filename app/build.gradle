@@ -34,6 +34,4 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.google.firebase:firebase-firestore:17.1.2'
     implementation 'com.google.firebase:firebase-core:16.0.5'
-    implementation 'com.google.firebase:firebase-firestore:17.1.2'
-
-}
+    implementation 'com.firebaseui:firebase-ui-auth:4.2.1'}
