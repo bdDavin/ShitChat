@@ -3,6 +3,7 @@ package se.shitchat.shitchatapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +20,7 @@ public class MessageActivity extends AppCompatActivity {
     private Button sendButton;
     private EditText ediMessage;
     private FirebaseFirestore db;
+    private RecyclerView messageRecycler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +34,8 @@ public class MessageActivity extends AppCompatActivity {
         //sendbutton
         sendButton.setOnClickListener(this::sendButtonPressed);
 
+
+        //insert items to recycler
 
 
     }
