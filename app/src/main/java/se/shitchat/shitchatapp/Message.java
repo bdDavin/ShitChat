@@ -14,7 +14,7 @@ public class Message {
     private String message;
     private String uid;
     private String name;
-    //TODO add user that created message
+
 
 
     //Constructor (Firebase)
