@@ -43,9 +43,7 @@ public class MessageActivity extends AppCompatActivity {
 
         initalization();
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setReverseLayout(true);
-        messageRecycler.setLayoutManager(linearLayoutManager);
+
 
         //sendbutton
         sendButton.setOnClickListener(this::sendButtonPressed);
@@ -54,7 +52,7 @@ public class MessageActivity extends AppCompatActivity {
         //insert items to recycler
         setUpRecyclerView();
 
-        //send message when enter key is psuhed
+        //send message when enter key is pushed
         ediMessage.setOnKeyListener((v, keyCode, event) -> {
             if (event.getAction() == KeyEvent.ACTION_DOWN)
             {
@@ -83,18 +81,24 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     private void setUpRecyclerView() {
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        messageRecycler.setLayoutManager(linearLayoutManager);
+
+        //gets message collection
         Query query = messages
                 .orderBy("creationDate", Query.Direction.ASCENDING)
                 .limit(50);
-
+        //creates recycler
         FirestoreRecyclerOptions<Message> options = new FirestoreRecyclerOptions.Builder<Message>()
                 .setQuery(query, Message.class)
                 .build();
 
+        //creates adapter from firestore to message bubbles
         adapter = new MessageAdapter(options);
 
+        //sets settings for recycler
         messageRecycler.setHasFixedSize(true);
-        messageRecycler.setLayoutManager(new LinearLayoutManager(this));
         messageRecycler.setAdapter(adapter);
         ((LinearLayoutManager)messageRecycler.getLayoutManager()).setStackFromEnd(true);
     }
@@ -102,16 +106,19 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        //starts updating from db
         adapter.startListening();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        //stop updating from db
         adapter.stopListening();
     }
 
     private void initalization() {
+        //instances firestore
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                 .build();
@@ -125,8 +132,8 @@ public class MessageActivity extends AppCompatActivity {
 
     private void sendButtonPressed(View v) {
 
+        //get user info
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
         String name = user.getDisplayName();
         String uid = user.getUid();
 

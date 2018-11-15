@@ -11,12 +11,10 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.List;
 
 
 public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder> {
 
-    private List<Chat> chats;
     private static final int VIEW_TYPE_ME = 1;
     private static final int VIEW_TYPE_OTHER = 2;
 
@@ -35,6 +33,7 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
             //if Im the sender
         if (model.getUid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
 
+            //sets information
             MessageHolder hold = (MessageHolder) holder;
             hold.messageView.setText(model.getMessage());
             hold.dateView.setText(model.getCreationDate());

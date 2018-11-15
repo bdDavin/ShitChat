@@ -16,6 +16,8 @@ public class MessageHolder extends RecyclerView.ViewHolder {
 
     public MessageHolder(@NonNull View itemView) {
         super(itemView);
+
+        //gets all references
         messageView = itemView.findViewById(R.id.text_view_message);
         dateView = itemView.findViewById(R.id.text_view_time);
         //pictureView = itemView.findViewById(R.id.image_view_profile);

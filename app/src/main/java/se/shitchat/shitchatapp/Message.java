@@ -28,11 +28,10 @@ public class Message {
 
     public Message(String message) {
         this.message = message;
-        this.creationDate = "1337";
         //Get current date time
         time = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-       this.creationDate = time.format(formatter);
+        this.creationDate = time.format(formatter);
 
 
     }
@@ -41,15 +40,12 @@ public class Message {
     //Getters/Setters
 
     public String getCreationDate() {
-
-
         return creationDate;
     }
 
     public String getMessage() {
         return message;
     }
-
 
     public void setName(String name) {
         this.name = name;
