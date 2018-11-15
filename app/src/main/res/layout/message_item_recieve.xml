@@ -1,48 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    card_view:cardCornerRadius="3dp"
-    card_view:cardBackgroundColor="@android:color/white"
-    card_view:cardElevation="4dp"
-    card_view:cardMaxElevation="6dp">
+    android:paddingStart="16dp"
+    android:paddingLeft="16dp"
+    android:paddingEnd="72dp"
+    android:paddingRight="72dp">
 
-    <LinearLayout
+    <android.support.v7.widget.CardView
+        android:id="@+id/bubble"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
-        android:orientation="horizontal">
+        android:layout_gravity="start"
+        app:cardBackgroundColor="@color/default_message_color_rcv"
+        app:cardCornerRadius="8dp"
+        app:cardUseCompatPadding="true">
 
-        <ImageView
-            android:id="@+id/image_view_profile"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_alignParentLeft="true"
-            android:layout_margin="8dp"
-            tools:srcCompat="@tools:sample/avatars[4]" />
-
-        <TextView
-            android:id="@+id/text_view_message"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="Placeholder for the real message" />
+            android:gravity="start"
+            android:orientation="vertical"
+            android:padding="8dp">
 
-        <TextView
-            android:id="@+id/text_view_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:baselineAligned="false"
-            android:text="TextView"
-            android:textSize="8sp"
-            tools:text="15:22" />
+            <TextView
+                android:id="@+id/text_view_sender"
+                tools:text="Timi"
+                android:textSize="@dimen/default_message_text_size"
+                android:textColor="@color/colorAccent"
+                android:layout_gravity="center_vertical|start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:visibility="visible"/>
 
-    </LinearLayout>
-</android.support.v7.widget.CardView>
+            <TextView
+                android:id="@+id/text_view_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:gravity="center_vertical|start"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/default_message_text_size"
+                tools:text="My name is Timi and I am..." />
+
+            <android.support.v4.widget.Space
+                android:layout_width="match_parent"
+                android:layout_height="4dp" />
+
+            <TextView
+                android:id="@+id/text_view_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:gravity="center_vertical|end"
+                android:textColor="@color/colorAccent"
+                android:textSize="8dp"
+                tools:text="12:10 am" />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</FrameLayout>

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,6 +51,23 @@ public class MessageActivity extends AppCompatActivity {
         //insert items to recycler
         setUpRecyclerView();
 
+        //send message when enter key is psuhed
+        ediMessage.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_DOWN)
+            {
+                switch (keyCode)
+                {
+                    case KeyEvent.KEYCODE_DPAD_CENTER:
+                    case KeyEvent.KEYCODE_ENTER:
+                        sendButtonPressed(v);
+                        return true;
+                    default:
+                        break;
+                }
+            }
+            return false;
+        });
+
     }
 
     private void setUpRecyclerView() {
@@ -90,6 +108,7 @@ public class MessageActivity extends AppCompatActivity {
         sendButton = findViewById(R.id.send_button);
         messageRecycler = findViewById(R.id.recyclerView);
         messages = db.collection("messages");
+
     }
 
     private void sendButtonPressed(View v) {

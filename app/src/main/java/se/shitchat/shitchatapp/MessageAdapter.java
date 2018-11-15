@@ -38,15 +38,19 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
             MessageHolder hold = (MessageHolder) holder;
             hold.messageView.setText(model.getMessage());
             hold.dateView.setText(model.getCreationDate());
+            hold.senderView.setText(model.getName());
+
             //TODo change to user image
-            hold.pictureView.setImageResource(R.drawable.default_profile);
+            //hold.pictureView.setImageResource(R.drawable.default_profile);
         }
         else {
             MessageHolder hold = (MessageHolder) holder;
             hold.messageView.setText(model.getMessage());
             hold.dateView.setText(model.getCreationDate());
+            hold.senderView.setText(model.getName());
+
             //TODo change to user image
-            hold.pictureView.setImageResource(R.drawable.default_profile);
+            //hold.pictureView.setImageResource(R.drawable.default_profile);
         }
 
     }
@@ -72,7 +76,7 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
         return viewHolder;
     }
 
-    
+
 
     @Override
     public int getItemViewType(int position) {
