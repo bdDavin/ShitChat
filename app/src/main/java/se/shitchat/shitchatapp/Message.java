@@ -1,16 +1,18 @@
 package se.shitchat.shitchatapp;
 
-import com.google.firebase.firestore.auth.User;
+
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
 
 
 public class Message {
 
 
     //Fields
-    private LocalDateTime creationDate;
+    private LocalDateTime time;
+    private String creationDate;
     private String message;
     private String uid;
     private String name;
@@ -23,8 +25,12 @@ public class Message {
 
     public Message(String message) {
         this.message = message;
+        this.creationDate = "1337";
         //Get current date time
-         creationDate = LocalDateTime.now();
+        time = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+       this.creationDate = time.format(formatter);
+
 
     }
 
@@ -33,11 +39,8 @@ public class Message {
 
     public String getCreationDate() {
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        String formatDateTime = creationDate.format(formatter);
-
-        return formatDateTime;
+        return creationDate;
     }
 
     public String getMessage() {

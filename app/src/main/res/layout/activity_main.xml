@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:background="@color/browser_actions_divider_color">
+    android:background="@color/ic_launcher_background">
 
 
     <android.support.v7.widget.Toolbar
