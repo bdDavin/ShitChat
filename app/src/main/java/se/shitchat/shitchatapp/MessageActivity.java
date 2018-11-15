@@ -14,12 +14,14 @@ import android.widget.EditText;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 
 public class MessageActivity extends AppCompatActivity {
@@ -30,6 +32,7 @@ public class MessageActivity extends AppCompatActivity {
     private RecyclerView messageRecycler;
     private CollectionReference messages;
     private MessageAdapter adapter;
+    private final String currentGroup = "testChat";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,10 +71,19 @@ public class MessageActivity extends AppCompatActivity {
             return false;
         });
 
+
+        //Scroll to bottom on new messages
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                messageRecycler.getLayoutManager().smoothScrollToPosition(messageRecycler, null, adapter.getItemCount());
+            }
+        });
+
     }
 
     private void setUpRecyclerView() {
-        Query query = db.collection("messages")
+        Query query = messages
                 .orderBy("creationDate", Query.Direction.ASCENDING)
                 .limit(50);
 
@@ -84,6 +96,7 @@ public class MessageActivity extends AppCompatActivity {
         messageRecycler.setHasFixedSize(true);
         messageRecycler.setLayoutManager(new LinearLayoutManager(this));
         messageRecycler.setAdapter(adapter);
+        ((LinearLayoutManager)messageRecycler.getLayoutManager()).setStackFromEnd(true);
     }
 
     @Override
@@ -108,7 +121,6 @@ public class MessageActivity extends AppCompatActivity {
         sendButton = findViewById(R.id.send_button);
         messageRecycler = findViewById(R.id.recyclerView);
         messages = db.collection("messages");
-
     }
 
     private void sendButtonPressed(View v) {

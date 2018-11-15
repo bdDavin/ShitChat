@@ -32,7 +32,7 @@
                 android:id="@+id/text_view_sender"
                 tools:text="Michael Obi"
                 android:textSize="@dimen/default_message_text_size"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/default_bubble_color_send_text"
                 android:layout_gravity="center_vertical|start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -44,12 +44,12 @@
 
             <TextView
                 android:id="@+id/text_view_message"
-                tools:text="My name is Timi and I am not a god. Inner places is not the atomic career of the doer."
+                tools:text="My name is Timi and I am not a god."
                 android:textSize="@dimen/default_message_text_size"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/default_bubble_color_send_text"
                 android:gravity="center_vertical|start"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"/>
 
             <android.support.v4.widget.Space
                 android:layout_width="match_parent"
@@ -59,7 +59,7 @@
                 android:id="@+id/text_view_time"
                 tools:text="12:10 am"
                 android:textSize="8dp"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/default_bubble_color_send_text"
                 android:gravity="center_vertical|start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />

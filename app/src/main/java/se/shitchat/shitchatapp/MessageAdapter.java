@@ -87,4 +87,6 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
             return VIEW_TYPE_OTHER;
         }
     }
+
+
 }
