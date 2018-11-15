@@ -22,4 +22,6 @@ public class MessageHolder extends RecyclerView.ViewHolder {
     }
 
 
+
+
 }

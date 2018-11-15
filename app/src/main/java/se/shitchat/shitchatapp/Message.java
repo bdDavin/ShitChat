@@ -2,9 +2,11 @@ package se.shitchat.shitchatapp;
 
 
 
+import com.google.firebase.firestore.ServerTimestamp;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
+import java.util.Date;
 
 
 public class Message {
@@ -16,6 +18,7 @@ public class Message {
     private String message;
     private String uid;
     private String name;
+    private @ServerTimestamp Date ServerTime;
 
 
 
