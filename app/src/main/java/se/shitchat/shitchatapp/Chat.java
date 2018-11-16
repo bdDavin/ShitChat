@@ -9,8 +9,8 @@ import java.util.ArrayList;
 public class Chat {
 
     private String name;
-    private ArrayList<String> messages;
-    private ArrayList<String> users;
+    private ArrayList messages;
+    private ArrayList users;
 
     public Chat(){}
 
@@ -32,7 +32,7 @@ public class Chat {
         return messages;
     }
 
-    public void setMessages(ArrayList messages) {
+    public void setMessages(ArrayList<String> messages) {
         this.messages = messages;
     }
 
@@ -40,7 +40,7 @@ public class Chat {
         return users;
     }
 
-    public void setUsers(ArrayList users) {
+    public void setUsers(ArrayList<String> users) {
         this.users = users;
     }
 }

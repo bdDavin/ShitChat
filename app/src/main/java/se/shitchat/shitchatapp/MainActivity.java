@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
-    private List<String> groupNames;
-    private List<String> lastGroupMessage;
+    //private List<String> groupNames;
+    //private List<String> lastGroupMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +59,19 @@ public class MainActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         Query query = db.collection("groups")
-                .whereArrayContains("users", user)
+                //.whereArrayContains("users", user)
                 .orderBy("name", Query.Direction.ASCENDING);
+
+/*
+        String groups;
+
+        Query query2 = db.collection("groups")
+                .document("TskjGm9Muti7c47eN6Gq")
+                .collection("messages")
+                .orderBy("time", Query.Direction.ASCENDING)
+                .limit(1);
+*/
+
 
         FirestoreRecyclerOptions<Chat> options = new FirestoreRecyclerOptions.Builder<Chat>()
                 .setQuery(query, Chat.class)
@@ -75,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull ChatsViewHolder holder, int position, @NonNull Chat chatModel) {
                 holder.chatsUsername.setText(chatModel.getName());
-
+                Log.d("hej", "onBindViewHolder: "+chatModel.getName());
                 holder.chatsParent.setOnClickListener(view ->
                         Toast.makeText(getApplicationContext(), chatModel.getName(), Toast.LENGTH_SHORT).show());
             }
