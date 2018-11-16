@@ -8,7 +8,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,11 +25,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,9 +40,6 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
-    //private List<String> groupNames;
-    //private List<String> lastGroupMessage;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,22 +50,19 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         String user = mAuth.getCurrentUser().getUid();
         db = FirebaseFirestore.getInstance();
-
+        //skapar och kollar login
+        createLogInScreen();
+        //frågan för databasem
         Query query = db.collection("groups")
-                //.whereArrayContains("users", user)
+                .whereArrayContains("users", user)
                 .orderBy("name", Query.Direction.ASCENDING);
-
-/*
-        String groups;
 
         Query query2 = db.collection("groups")
                 .document("TskjGm9Muti7c47eN6Gq")
                 .collection("messages")
                 .orderBy("time", Query.Direction.ASCENDING)
                 .limit(1);
-*/
-
-
+        //hämtar data lägger i class
         FirestoreRecyclerOptions<Chat> options = new FirestoreRecyclerOptions.Builder<Chat>()
                 .setQuery(query, Chat.class)
                 .build();
@@ -86,8 +76,9 @@ public class MainActivity extends AppCompatActivity {
         adapter = new FirestoreRecyclerAdapter<Chat, ChatsViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull ChatsViewHolder holder, int position, @NonNull Chat chatModel) {
+                //sätter datan till viewsen
                 holder.chatsUsername.setText(chatModel.getName());
-                Log.d("hej", "onBindViewHolder: "+chatModel.getName());
+
                 holder.chatsParent.setOnClickListener(view ->
                         Toast.makeText(getApplicationContext(), chatModel.getName(), Toast.LENGTH_SHORT).show());
             }
@@ -101,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         chatsRecyclerView.setAdapter(adapter);
-        createLogInScreen();
+
 
     }
 
@@ -125,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         adapter.startListening();
-        //getGroupInfo();
     }
 
     @Override
@@ -140,49 +130,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    /*public void initRecyclerView() {
-        RecyclerView rV = findViewById(R.id.chatsRecyclerView);
-        Log.d("hej", "ChatsAdapter: " + lastGroupMessage);
-
-        ChatsAdapter adapter = new ChatsAdapter(groupNames, lastGroupMessage, this);
-        rV.setAdapter(adapter);
-        rV.setLayoutManager(new LinearLayoutManager(this));
-    }
-
-    public void getGroupInfo() {
-        //Här ska grupperna hämtas eller infon om grupperna
-        String user = mAuth.getCurrentUser().getUid();
-
-        groupNames = new ArrayList<>();
-        lastGroupMessage = new ArrayList<>();
-
-        db.collection("groups")
-                .whereArrayContains("users", user)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            String name = document.getString("name");
-                            groupNames.add(name);
-
-                            ArrayList<String> messages = (ArrayList<String>) document.get("messages");
-                            int lastMessagesIndex = messages.size() - 1;
-                            String lastMessageId = messages.get(lastMessagesIndex);
-
-                            DocumentReference lastMessageRef = db.collection("messages").document(lastMessageId);
-                            lastMessageRef
-                                    .get()
-                                    .addOnSuccessListener(documentSnapshot -> {
-                                        String message = documentSnapshot.getString("message");
-                                        lastGroupMessage.add(message);
-                                    });
-
-                        }
-                        initRecyclerView();
-                    }
-                });
-    }
-*/
     public void createLogInScreen() {
 
         if (mAuth.getCurrentUser() == null) {
@@ -217,12 +164,10 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 // Sparar användaren i databasen med Uid
-                // exempel på sakar att spara om användaren
-                Map<String, Object> user = new HashMap<>();
-                user.put("name", mAuth.getCurrentUser().getDisplayName());
-                user.put("email", mAuth.getCurrentUser().getEmail());
-                user.put("logged_in_method", mAuth.getCurrentUser().getProviderId());
-
+                User user = new User();
+                user.setEmail(mAuth.getCurrentUser().getEmail());
+                user.setUsername(mAuth.getCurrentUser().getDisplayName());
+                user.setImage("default");
 
                 String userUid = mAuth.getCurrentUser().getUid();
                 db.collection("users")
@@ -231,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
 
                 showSignedInSnack();
             } else {
-                Snackbar.make(findViewById(R.id.mainToolbar), "Log in failed, try again later",
+                Snackbar.make(findViewById(R.id.mainToolbar), R.string.log_in_failed,
                         Snackbar.LENGTH_LONG)
                         .show();
             }
@@ -246,22 +191,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void newMessage(View view) {
-        ArrayList messages = new ArrayList<>();
-        ArrayList users = new ArrayList();
-
-        String currentUser = mAuth.getCurrentUser().getUid();
-        users.add(db.collection("users").document(currentUser));
-
-        //UIDet för användaren som man startar chat med ska vara här
-        String chatUser = "4NGBpXfqfSVkOvDo8VOYRzFmY582";
-        users.add(db.collection("users").document(chatUser));
-
-        Chat chat = new Chat("A Group", messages, users);
-
-        db.collection("groups").add(chat);
-
-        // Intent i = new Intent(this, SearchActivity.class);
-        // startActivity(i);
+        Intent i = new Intent(this, SearchActivity.class);
+        startActivity(i);
     }
 
     public void enterProfile(MenuItem item) {
