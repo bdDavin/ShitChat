@@ -31,13 +31,12 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
 
 
             //if Im the sender
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        if (model.getUid().equals(uid)) {
+        if (model.getUid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
 
             //sets information
             MessageHolder hold = (MessageHolder) holder;
             hold.messageView.setText(model.getMessage());
-            hold.dateView.setText(model.getCreationDate());
+            hold.dateView.setText(model.getDisplayTime());
             hold.senderView.setText(model.getName());
 
             //TODo change to user image
@@ -46,7 +45,7 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
         else {
             MessageHolder hold = (MessageHolder) holder;
             hold.messageView.setText(model.getMessage());
-            hold.dateView.setText(model.getCreationDate());
+            hold.dateView.setText(model.getDisplayTime());
             hold.senderView.setText(model.getName());
 
             //TODo change to user image

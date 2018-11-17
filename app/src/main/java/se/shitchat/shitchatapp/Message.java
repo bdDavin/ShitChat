@@ -6,6 +6,8 @@ package se.shitchat.shitchatapp;
 import com.google.firebase.firestore.ServerTimestamp;
 
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
@@ -15,13 +17,11 @@ public class Message {
 
 
     //Fields
-    //private LocalDateTime time;
-    //private String creationDate;
     private String message;
     private String uid;
     private String name;
     private @ServerTimestamp Date timeStamp;
-
+    private String creationDate;
 
 
     //Constructor (Firebase)
@@ -37,7 +37,7 @@ public class Message {
     public String getCreationDate() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         //formatter.format(serverTime);
-        return "2";
+        return creationDate;
     }
 
     public Date getTimestamp() {
@@ -66,5 +66,18 @@ public class Message {
 
     public String getName() {
         return name;
+    }
+
+    public void setCreationDate() {
+        if (this.creationDate == null) {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Date date = new Date();
+            this.creationDate = (dateFormat.format(date)); //2016/11/16 12:08:43
+        }
+    }
+
+    public String getDisplayTime() {
+        //only displays HH:mm
+        return creationDate.substring(11, 16);
     }
 }

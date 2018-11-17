@@ -16,7 +16,6 @@ import android.widget.EditText;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
@@ -32,8 +31,8 @@ public class MessageActivity extends AppCompatActivity {
     private MessageAdapter adapter;
 
     //from group
-    private String groupId = "test";
-    private String groupName = "Benjamin test";
+    private String groupId = "kemywcCWdHKO5ESZpSZn";
+    private String groupName = "Benjamin test grupp";
 
 
     @Override
@@ -152,6 +151,7 @@ public class MessageActivity extends AppCompatActivity {
         message.setMessage(input);
         message.setUserID(uid);
         message.setName(name);
+        message.setCreationDate();
 
         //sends message to database
         db.collection("groups").document(groupId)
