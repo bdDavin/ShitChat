@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void newMessage(View view) {
-        Intent i = new Intent(this, SearchActivity.class);
+        Intent i = new Intent(this, MessageActivity.class);
         startActivity(i);
     }
 

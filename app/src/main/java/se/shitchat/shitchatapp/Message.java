@@ -1,49 +1,56 @@
 package se.shitchat.shitchatapp;
 
-import com.google.firebase.firestore.auth.User;
 
-import java.time.LocalDateTime;
+
+
+import com.google.firebase.firestore.ServerTimestamp;
+
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 
 public class Message {
 
 
+
     //Fields
-    private LocalDateTime creationDate;
     private String message;
     private String uid;
     private String name;
-    //TODO add user that created message
+    private @ServerTimestamp Date timeStamp;
+    private String creationDate;
 
 
     //Constructor (Firebase)
     public Message() {
     }
 
-    public Message(String message) {
-        this.message = message;
-        //Get current date time
-         creationDate = LocalDateTime.now();
-
-    }
-
 
     //Getters/Setters
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
     public String getCreationDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        //formatter.format(serverTime);
+        return creationDate;
+    }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public Date getTimestamp() {
+        return timeStamp;
+    }
 
-        String formatDateTime = creationDate.format(formatter);
-
-        return formatDateTime;
+    public void setTimestamp(Date timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     public String getMessage() {
         return message;
     }
-
 
     public void setName(String name) {
         this.name = name;
@@ -59,5 +66,18 @@ public class Message {
 
     public String getName() {
         return name;
+    }
+
+    public void setCreationDate() {
+        if (this.creationDate == null) {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Date date = new Date();
+            this.creationDate = (dateFormat.format(date)); //2016/11/16 12:08:43
+        }
+    }
+
+    public String getDisplayTime() {
+        //only displays HH:mm
+        return creationDate.substring(11, 16);
     }
 }
