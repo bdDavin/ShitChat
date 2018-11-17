@@ -42,6 +42,9 @@ public class MessageActivity extends AppCompatActivity {
 
         setSupportActionBar(findViewById(R.id.messageToolbar));
 
+        Intent intent = getIntent();
+        groupId = intent.getStringExtra("grouoId");
+
         initalization();
 
 

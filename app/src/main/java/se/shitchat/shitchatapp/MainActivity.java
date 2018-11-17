@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
             adapter.stopListening();
         }
     }
+
     public void initRecycler(){
         //frågan för databasen
         Query query = db.collection("groups")
@@ -122,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
         };
         chatsRecyclerView.setAdapter(adapter);
     }
+
     //Skapar login Aktiviteten
     public void createLogInScreen() {
 
@@ -148,6 +150,8 @@ public class MainActivity extends AppCompatActivity {
             showSignedInSnack();
         }
     }
+
+
     @Override //Kollar om man inlogg gick igenom
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
