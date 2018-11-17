@@ -25,10 +25,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 1337;
-    //create fragment fields
-    private Fragment mainFragment;
-    private FragmentManager fragmentManager;
-    private FragmentTransaction fragmentTransaction;
+
     private FloatingActionButton mainFab;
 
     private FirebaseAuth mAuth;

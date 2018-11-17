@@ -30,7 +30,7 @@
                 android:id="@+id/text_view_sender"
                 tools:text="Timi"
                 android:textSize="@dimen/default_message_text_size"
-                android:textColor="@color/default_bubble_color_send"
+                android:textColor="@color/default_bubble_color_send_text"
                 android:layout_gravity="center_vertical|start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

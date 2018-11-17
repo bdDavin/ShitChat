@@ -12,16 +12,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
+
 
 
 public class MessageActivity extends AppCompatActivity {
@@ -30,9 +29,12 @@ public class MessageActivity extends AppCompatActivity {
     private EditText ediMessage;
     private FirebaseFirestore db;
     private RecyclerView messageRecycler;
-    private CollectionReference messages;
     private MessageAdapter adapter;
-    private final String currentGroup = "testChat";
+
+    //from group
+    private String groupId = "kemywcCWdHKO5ESZpSZn";
+    private String groupName = "groupName";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +44,6 @@ public class MessageActivity extends AppCompatActivity {
         setSupportActionBar(findViewById(R.id.messageToolbar));
 
         initalization();
-
 
 
         //sendbutton
@@ -78,6 +79,9 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
+        //change toolbar to groupname
+        getSupportActionBar().setTitle(groupName);
+
     }
 
     private void setUpRecyclerView() {
@@ -86,7 +90,7 @@ public class MessageActivity extends AppCompatActivity {
         messageRecycler.setLayoutManager(linearLayoutManager);
 
         //gets message collection
-        Query query = messages
+        Query query = db.collection("groups").document(groupId).collection("messages")
                 .orderBy("creationDate", Query.Direction.ASCENDING)
                 .limit(50);
         //creates recycler
@@ -118,16 +122,14 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     private void initalization() {
+        db = FirebaseFirestore.getInstance();
         //instances firestore
-        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                 .build();
-        firestore.setFirestoreSettings(settings);
-        db = FirebaseFirestore.getInstance();
+        db.setFirestoreSettings(settings);
         ediMessage = findViewById(R.id.message_edit);
         sendButton = findViewById(R.id.send_button);
         messageRecycler = findViewById(R.id.recyclerView);
-        messages = db.collection("messages");
     }
 
     private void sendButtonPressed(View v) {
@@ -146,15 +148,16 @@ public class MessageActivity extends AppCompatActivity {
             return;
         }
         //creates message
-        Message message = new Message(input);
+        Message message = new Message();
+        message.setMessage(input);
         message.setUserID(uid);
         message.setName(name);
 
         //sends message to database
-        db.collection("messages").add(message);
+        db.collection("groups").document(groupId)
+                .collection("messages").add(message);
+
     }
-
-
 
     private String getInput() {
         return ediMessage.getText().toString();

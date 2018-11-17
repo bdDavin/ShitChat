@@ -2,9 +2,10 @@ package se.shitchat.shitchatapp;
 
 
 
+
 import com.google.firebase.firestore.ServerTimestamp;
 
-import java.time.LocalDateTime;
+
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
@@ -12,13 +13,14 @@ import java.util.Date;
 public class Message {
 
 
+
     //Fields
-    private LocalDateTime time;
-    private String creationDate;
+    //private LocalDateTime time;
+    //private String creationDate;
     private String message;
     private String uid;
     private String name;
-    private @ServerTimestamp Date ServerTime;
+    private @ServerTimestamp Date timeStamp;
 
 
 
@@ -26,21 +28,24 @@ public class Message {
     public Message() {
     }
 
-    public Message(String message) {
-        this.message = message;
-        //Get current date time
-        time = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-        this.creationDate = time.format(formatter);
-
-
-    }
-
 
     //Getters/Setters
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
     public String getCreationDate() {
-        return creationDate;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        //formatter.format(serverTime);
+        return "2";
+    }
+
+    public Date getTimestamp() {
+        return timeStamp;
+    }
+
+    public void setTimestamp(Date timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     public String getMessage() {
