@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="72dp"
+    android:paddingLeft="72dp"
+    android:paddingEnd="16dp"
+    android:paddingRight="16dp">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/bubble"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@color/default_bubble_color_send"
+        app:cardUseCompatPadding="true"
+        android:layout_gravity="end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:padding="8dp"
+            android:gravity="end"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/text_view_sender"
+                tools:text="Michael Obi"
+                android:textSize="@dimen/default_message_text_size"
+                android:textColor="@color/default_bubble_color_send_text"
+                android:layout_gravity="center_vertical|start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+
+
+            <TextView
+                android:id="@+id/text_view_message"
+                tools:text="My name is Timi and I am not a god."
+                android:textSize="@dimen/default_message_text_size"
+                android:textColor="@color/default_bubble_color_send_text"
+                android:gravity="center_vertical|start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="match_parent"
+                android:layout_height="4dp" />
+
+            <TextView
+                android:id="@+id/text_view_time"
+                tools:text="12:10 am"
+                android:textSize="8dp"
+                android:textColor="@color/default_bubble_color_send_text"
+                android:gravity="center_vertical|start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</FrameLayout>

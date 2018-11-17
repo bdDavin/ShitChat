@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MessageActivity"
-    android:background="@color/browser_actions_divider_color">
+    android:background="@color/ic_launcher_background"
+    android:windowSoftInputMode="adjustResize"
+    tools:context=".MessageActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/messageToolbar"
@@ -25,10 +26,12 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/send_button"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messageToolbar">
+        app:layout_constraintTop_toBottomOf="@+id/messageToolbar"
+        app:layout_constraintVertical_bias="1.0"
+        tools:listitem="@layout/message_item" />
 
-    </android.support.v7.widget.RecyclerView>
 
     <Button
         android:id="@+id/send_button"
@@ -48,10 +51,10 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:autofillHints="Enter message"
         android:ems="10"
         android:hint="@string/message"
         android:inputType="text"
-        android:autofillHints="Enter message"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/send_button"
         app:layout_constraintStart_toStartOf="parent"
