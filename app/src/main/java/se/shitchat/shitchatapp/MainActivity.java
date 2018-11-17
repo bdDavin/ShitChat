@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private String userUid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,41 +48,70 @@ public class MainActivity extends AppCompatActivity {
 
         //implements firestore database och auth
         mAuth = FirebaseAuth.getInstance();
-        String user = mAuth.getCurrentUser().getUid();
         db = FirebaseFirestore.getInstance();
-        //skapar och kollar login
-        createLogInScreen();
-        //frågan för databasem
-        Query query = db.collection("groups")
-                .whereArrayContains("users", user)
-                .orderBy("name", Query.Direction.ASCENDING);
-
-        Query query2 = db.collection("groups")
-                .document("TskjGm9Muti7c47eN6Gq")
-                .collection("messages")
-                .orderBy("time", Query.Direction.ASCENDING)
-                .limit(1);
-        //hämtar data lägger i class
-        FirestoreRecyclerOptions<Chat> options = new FirestoreRecyclerOptions.Builder<Chat>()
-                .setQuery(query, Chat.class)
-                .build();
 
         mainFab = findViewById(R.id.mainFab);
         chatsRecyclerView = findViewById(R.id.chatsRecyclerView);
 
+        //skapar och kollar login
+        createLogInScreen();
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mAuth.getCurrentUser() != null) {
+            adapter.startListening();
+        }
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mAuth.getCurrentUser() != null) {
+            adapter.stopListening();
+        }
+    }
+    public void initRecycler(){
+        //frågan för databasen
+        Query query = db.collection("groups")
+                .whereArrayContains("users", userUid)
+                .orderBy("name");
+
+        //hämtar datan lägger i Chat.class
+        FirestoreRecyclerOptions<Chat> options = new FirestoreRecyclerOptions.Builder<Chat>()
+                .setQuery(query, Chat.class)
+                .build();
+
         chatsRecyclerView.setHasFixedSize(true);
         chatsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+        //Skapar adaptern
         adapter = new FirestoreRecyclerAdapter<Chat, ChatsViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull ChatsViewHolder holder, int position, @NonNull Chat chatModel) {
                 //sätter datan till viewsen
                 holder.chatsUsername.setText(chatModel.getName());
-
-                holder.chatsParent.setOnClickListener(view ->
-                        Toast.makeText(getApplicationContext(), chatModel.getName(), Toast.LENGTH_SHORT).show());
+                //frågar databasen efter det senaste meddelandet i gruppen och sätter det i vyn
+                String groupId = getSnapshots().getSnapshot(position).getId();
+                db.collection("groups")
+                        .document(groupId)
+                        .collection("messages")
+                        .orderBy("creationDate", Query.Direction.DESCENDING)
+                        .limit(1)
+                        .addSnapshotListener((snapshot, e) -> {
+                            if (!snapshot.isEmpty()) {
+                                String m = snapshot.getDocuments().get(0).getString("message");
+                                holder.lastMessage.setText(m);
+                            }
+                        });
+                //sätter en onClick på alla items så när man klickar öppnas meddelandeaktivitetn
+                //och skickar med grupp dokumentets namn
+                holder.chatsParent.setOnClickListener(v -> {
+                    Intent i = new Intent(getApplicationContext(), MessageActivity.class);
+                    i.putExtra("grouoId", groupId);
+                    startActivity(i);
+                    //temporär för att visa vilket grupp id som skickas med
+                    Toast.makeText(getApplicationContext(), groupId, Toast.LENGTH_SHORT).show();
+                });
             }
-
             @NonNull
             @Override
             public ChatsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -92,48 +121,12 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         chatsRecyclerView.setAdapter(adapter);
-
-
     }
-
-    private class ChatsViewHolder extends RecyclerView.ViewHolder {
-        private TextView chatsUsername;
-        private TextView lastMessage;
-        private LinearLayout chatsParent;
-
-        public ChatsViewHolder(View itemView) {
-
-            super(itemView);
-
-            chatsUsername = itemView.findViewById(R.id.chats_username);
-            lastMessage = itemView.findViewById(R.id.chats_last_message);
-            chatsParent = itemView.findViewById(R.id.chats_parent);
-
-        }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        adapter.startListening();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        adapter.stopListening();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
+    //Skapar login Aktiviteten
     public void createLogInScreen() {
 
         if (mAuth.getCurrentUser() == null) {
-            // Här kan vi lägga till fler inloggs alternativ
+            //inloggs alternativ
             List<AuthUI.IdpConfig> providers = Arrays.asList(
                     new AuthUI.IdpConfig.GoogleBuilder().build(),
                     new AuthUI.IdpConfig.EmailBuilder().build());
@@ -148,27 +141,26 @@ public class MainActivity extends AppCompatActivity {
                             .setTheme(R.style.CustomTheme)
                             .build(),
                     RC_SIGN_IN);
-        } else {
 
+        } else {
+            userUid = mAuth.getCurrentUser().getUid();
+            initRecycler();
             showSignedInSnack();
         }
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    @Override //Kollar om man inlogg gick igenom
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_SIGN_IN) {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
-
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
-                // Sparar användaren i databasen med Uid
+                //Skapar en User.class instans
                 User user = new User();
                 user.setEmail(mAuth.getCurrentUser().getEmail());
                 user.setUsername(mAuth.getCurrentUser().getDisplayName());
                 user.setImage("default");
-
+                // Sparar användaren i databasen med Uid
                 String userUid = mAuth.getCurrentUser().getUid();
                 db.collection("users")
                         .document(userUid)
@@ -176,20 +168,30 @@ public class MainActivity extends AppCompatActivity {
 
                 showSignedInSnack();
             } else {
-                Snackbar.make(findViewById(R.id.mainToolbar), R.string.log_in_failed,
-                        Snackbar.LENGTH_LONG)
-                        .show();
+                showLoginFailedSnack();
             }
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     //En snackbar som vissar vem som är inloggad
     private void showSignedInSnack() {
-        Snackbar.make(findViewById(R.id.mainToolbar), getString(R.string.logged_in_as) + FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),
+        Snackbar.make(findViewById(R.id.mainToolbar), getString(R.string.logged_in_as)+" " + mAuth.getCurrentUser().getDisplayName(),
                 Snackbar.LENGTH_SHORT)
                 .show();
     }
-
+    //En snackbar
+    private void showLoginFailedSnack() {
+        Snackbar.make(findViewById(R.id.mainToolbar), R.string.log_in_failed,
+                Snackbar.LENGTH_LONG)
+                .show();
+    }
+    public int i = 0;
     public void newMessage(View view) {
         Intent i = new Intent(this, MessageActivity.class);
         startActivity(i);
@@ -203,5 +205,19 @@ public class MainActivity extends AppCompatActivity {
     public void logOut(MenuItem item) {
         mAuth.signOut();
         createLogInScreen();
+    }
+
+    private class ChatsViewHolder extends RecyclerView.ViewHolder {
+        private TextView chatsUsername;
+        private TextView lastMessage;
+        private LinearLayout chatsParent;
+
+        public ChatsViewHolder(View itemView) {
+            super(itemView);
+
+            chatsUsername = itemView.findViewById(R.id.chats_username);
+            lastMessage = itemView.findViewById(R.id.chats_last_message);
+            chatsParent = itemView.findViewById(R.id.chats_parent);
+        }
     }
 }
