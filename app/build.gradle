@@ -40,5 +40,4 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:17.1.2'
     implementation 'com.firebaseui:firebase-ui-auth:4.2.1'
     implementation "com.firebaseui:firebase-ui-firestore:4.2.1"
-
 }

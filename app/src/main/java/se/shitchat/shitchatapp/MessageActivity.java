@@ -32,8 +32,8 @@ public class MessageActivity extends AppCompatActivity {
     private MessageAdapter adapter;
 
     //from group
-    private String groupId = "kemywcCWdHKO5ESZpSZn";
-    private String groupName = "groupName";
+    private String groupId = "test";
+    private String groupName = "Benjamin test";
 
 
     @Override

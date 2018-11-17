@@ -31,7 +31,8 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
 
 
             //if Im the sender
-        if (model.getUid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        if (model.getUid().equals(uid)) {
 
             //sets information
             MessageHolder hold = (MessageHolder) holder;
