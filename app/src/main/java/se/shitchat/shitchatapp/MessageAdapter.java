@@ -2,7 +2,7 @@ package se.shitchat.shitchatapp;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +11,10 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Objects;
 
 
-public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder> {
+class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder> {
 
     private static final int VIEW_TYPE_ME = 1;
     private static final int VIEW_TYPE_OTHER = 2;
@@ -27,17 +28,20 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
 
 
     @Override
-    protected void onBindViewHolder(RecyclerView.ViewHolder holder, int position, Message model) {
+    protected void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, Message model) {
 
 
             //if Im the sender
-        if (model.getUid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+        if (model.getUid().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
 
             //sets information
             MessageHolder hold = (MessageHolder) holder;
             hold.messageView.setText(model.getMessage());
             hold.dateView.setText(model.getDisplayTime());
             hold.senderView.setText(model.getName());
+            Log.i("Name", model.getName());
+            //TODO remove test sender
+            hold.senderView.setText("Avsändare");
 
             //TODo change to user image
             //hold.pictureView.setImageResource(R.drawable.default_profile);

@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                 //och skickar med grupp dokumentets namn
                 holder.chatsParent.setOnClickListener(v -> {
                     Intent i = new Intent(getApplicationContext(), MessageActivity.class);
-                    i.putExtra("grouoId", groupId);
+                    i.putExtra("groupId", groupId);
                     startActivity(i);
                     //temporär för att visa vilket grupp id som skickas med
                     Toast.makeText(getApplicationContext(), groupId, Toast.LENGTH_SHORT).show();
@@ -117,8 +117,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public ChatsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
                 View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_chats, viewGroup, false);
-                ChatsViewHolder holder = new ChatsViewHolder(view);
-                return holder;
+                return new ChatsViewHolder(view);
             }
         };
         chatsRecyclerView.setAdapter(adapter);
