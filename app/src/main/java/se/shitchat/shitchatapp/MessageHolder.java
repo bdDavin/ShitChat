@@ -3,14 +3,13 @@ package se.shitchat.shitchatapp;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MessageHolder extends RecyclerView.ViewHolder {
+class MessageHolder extends RecyclerView.ViewHolder {
 
     //Fields
     public TextView dateView;
-    public TextView messageView;
+    public final TextView messageView;
     //public ImageView pictureView;
     public TextView senderView;
 

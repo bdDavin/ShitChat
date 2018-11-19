@@ -10,11 +10,16 @@ public class Chat {
 
     private String name;
     private ArrayList messages;
-    private ArrayList users;
+    private ArrayList<String> users;
 
     public Chat(){}
 
-    public Chat(String name, ArrayList messages, ArrayList users) {
+    public Chat(String name) {
+        this.name = name;
+        users = new ArrayList<>();
+    }
+
+    public Chat(String name, ArrayList messages, ArrayList<String> users) {
         this.name = name;
         this.messages = messages;
         this.users = users;
@@ -40,7 +45,16 @@ public class Chat {
         return users;
     }
 
-    public void setUsers(ArrayList<String> users) {
-        this.users = users;
+    public void addUser(String userID) {
+        users.add(userID);
+    }
+
+    public void setUsers(ArrayList<String> userIDList) {
+        this.users = userIDList;
+    }
+
+    public void removeUser(String userID) {
+        users.remove(userID);
+
     }
 }

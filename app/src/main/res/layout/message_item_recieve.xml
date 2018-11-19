@@ -6,9 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingStart="16dp"
-    android:paddingLeft="16dp"
-    android:paddingEnd="72dp"
-    android:paddingRight="72dp">
+    android:paddingEnd="72dp">
 
     <android.support.v7.widget.CardView
         android:id="@+id/bubble"
@@ -60,7 +58,7 @@
                 android:layout_gravity="end"
                 android:gravity="center_vertical|end"
                 android:textColor="@color/default_bubble_color_send_text"
-                android:textSize="8dp"
+                android:textSize="12sp"
                 tools:text="12:10 am" />
 
         </LinearLayout>

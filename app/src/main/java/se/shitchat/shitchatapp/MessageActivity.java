@@ -20,6 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
 
+import java.util.Objects;
 
 
 public class MessageActivity extends AppCompatActivity {
@@ -32,7 +33,6 @@ public class MessageActivity extends AppCompatActivity {
 
     //from group
     private String groupId = "kemywcCWdHKO5ESZpSZn";
-    private String groupName = "Benjamin test grupp";
 
 
     @Override
@@ -41,6 +41,10 @@ public class MessageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_message);
 
         setSupportActionBar(findViewById(R.id.messageToolbar));
+
+        Intent intent = getIntent();
+        groupId = intent.getStringExtra("groupId");
+
 
         initalization();
 
@@ -79,7 +83,8 @@ public class MessageActivity extends AppCompatActivity {
         });
 
         //change toolbar to groupname
-        getSupportActionBar().setTitle(groupName);
+        String groupName = "Benjamin test grupp";
+        Objects.requireNonNull(getSupportActionBar()).setTitle(groupName);
 
     }
 
