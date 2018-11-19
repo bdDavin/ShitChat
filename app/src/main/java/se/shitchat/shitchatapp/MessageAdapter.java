@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -30,31 +31,23 @@ class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerView.View
     @Override
     protected void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, Message model) {
 
-
-            //if Im the sender
-        if (model.getUid().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
-
-            //sets information
+        //displays information
             MessageHolder hold = (MessageHolder) holder;
             hold.messageView.setText(model.getMessage());
             hold.dateView.setText(model.getDisplayTime());
             hold.senderView.setText(model.getName());
-            Log.i("Name", model.getName());
-            //TODO remove test sender
-            hold.senderView.setText("Avsändare");
 
             //TODo change to user image
             //hold.pictureView.setImageResource(R.drawable.default_profile);
+
+        //displays imageview if picture is sent
+        if (hold.pictureView.getDrawable() == null) {
+            hold.pictureView.setVisibility(View.GONE);
         }
         else {
-            MessageHolder hold = (MessageHolder) holder;
-            hold.messageView.setText(model.getMessage());
-            hold.dateView.setText(model.getDisplayTime());
-            hold.senderView.setText(model.getName());
-
-            //TODo change to user image
-            //hold.pictureView.setImageResource(R.drawable.default_profile);
+            hold.pictureView.setVisibility(View.VISIBLE);
         }
+
 
     }
 
@@ -70,11 +63,15 @@ class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerView.View
             case VIEW_TYPE_ME:
                 View vMe = layoutInflater.inflate(R.layout.message_item, viewGroup, false);
                 viewHolder = new MessageHolder(vMe);
+
                 break;
             case VIEW_TYPE_OTHER:
                 View vOther = layoutInflater.inflate(R.layout.message_item_recieve, viewGroup, false);
                 viewHolder = new MessageHolder(vOther);
                 break;
+
+
+                //if picture is sent
         }
         return viewHolder;
     }
