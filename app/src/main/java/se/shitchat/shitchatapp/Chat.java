@@ -2,6 +2,7 @@ package se.shitchat.shitchatapp;
 
 
 import java.util.ArrayList;
+import java.util.BitSet;
 
 /**
  * Innehåller all info för en chat
@@ -9,20 +10,23 @@ import java.util.ArrayList;
 public class Chat {
 
     private String name;
-    private ArrayList messages;
-    private ArrayList<String> users;
 
+    private ArrayList messages;
+
+    private ArrayList<String> userId;
+    private ArrayList<String> userNames;
     public Chat(){}
 
     public Chat(String name) {
         this.name = name;
-        users = new ArrayList<>();
+        userId = new ArrayList<>();
+        userNames = new ArrayList<>();
     }
 
     public Chat(String name, ArrayList messages, ArrayList<String> users) {
         this.name = name;
         this.messages = messages;
-        this.users = users;
+        this.userId = users;
     }
 
     public String getName() {
@@ -33,28 +37,32 @@ public class Chat {
         this.name = name;
     }
 
-    public ArrayList getMessages() {
-        return messages;
-    }
 
     public void setMessages(ArrayList<String> messages) {
         this.messages = messages;
     }
 
-    public ArrayList getUsers() {
-        return users;
+
+    private void addUserId(String userId) {
+        this.userId.add(userId);
     }
 
-    public void addUser(String userID) {
-        users.add(userID);
+    private void addUserName(String userName) {
+        this.userNames.add(userName);
     }
 
-    public void setUsers(ArrayList<String> userIDList) {
-        this.users = userIDList;
+    public void addUser(String userName, String userID) {
+       addUserId(userID);
+       addUserName(userName);
     }
 
-    public void removeUser(String userID) {
-        users.remove(userID);
-
+    public ArrayList<String> getUserId() {
+        return userId;
     }
+
+    public ArrayList<String> getUserNames() {
+        return userNames;
+    }
+
+
 }

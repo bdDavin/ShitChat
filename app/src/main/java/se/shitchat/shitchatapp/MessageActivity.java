@@ -33,6 +33,7 @@ public class MessageActivity extends AppCompatActivity {
 
     //from group
     private String groupId = "kemywcCWdHKO5ESZpSZn";
+    String groupName = "Benjamin test grupp";
 
 
     @Override
@@ -44,6 +45,11 @@ public class MessageActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         groupId = intent.getStringExtra("groupId");
+        groupName = intent.getStringExtra("groupName");
+
+        if (groupName == null) {
+            groupName = "namnet laddas ej";
+        }
 
 
         initalization();
@@ -83,7 +89,6 @@ public class MessageActivity extends AppCompatActivity {
         });
 
         //change toolbar to groupname
-        String groupName = "Benjamin test grupp";
         Objects.requireNonNull(getSupportActionBar()).setTitle(groupName);
 
     }
@@ -161,6 +166,9 @@ public class MessageActivity extends AppCompatActivity {
         //sends message to database
         db.collection("groups").document(groupId)
                 .collection("messages").add(message);
+
+        db.collection("groups").document(groupId).update("lasUpdated", message.getCreationDate());
+
 
     }
 
