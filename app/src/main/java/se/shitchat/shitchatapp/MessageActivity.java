@@ -34,6 +34,7 @@ public class MessageActivity extends AppCompatActivity {
     //from group
     private String groupId = "kemywcCWdHKO5ESZpSZn";
     String groupName = "Benjamin test grupp";
+    private boolean image;
 
 
     @Override
@@ -163,6 +164,11 @@ public class MessageActivity extends AppCompatActivity {
         message.setName(name);
         message.setCreationDate();
 
+        //adds image
+        if (image) {
+            message.setImage("R.drawable.default_profile");
+        }
+
         //sends message to database
         db.collection("groups").document(groupId)
                 .collection("messages").add(message);
@@ -189,4 +195,7 @@ public class MessageActivity extends AppCompatActivity {
     }
 
 
+    public void addImagePresseed(View view) {
+        image = !image;
+    }
 }

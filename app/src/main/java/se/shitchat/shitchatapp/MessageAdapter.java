@@ -37,18 +37,19 @@ class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerView.View
             hold.dateView.setText(model.getDisplayTime());
             hold.senderView.setText(model.getName());
 
-            //TODo change to user image
-            //hold.pictureView.setImageResource(R.drawable.default_profile);
 
         //displays imageview if picture is sent
-        if (hold.pictureView.getDrawable() == null) {
+        if (model.getImage() != null) {
+            hold.pictureView.setImageResource(R.drawable.default_profile);
+            //TODO load image from url = model.getImage()
+            //hold.pictureView.setImageResource(model.getImage());
+
             hold.pictureView.setVisibility(View.GONE);
         }
         else {
             hold.pictureView.setVisibility(View.VISIBLE);
         }
-
-
+        
     }
 
     @NonNull
