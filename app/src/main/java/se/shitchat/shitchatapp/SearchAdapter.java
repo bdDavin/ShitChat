@@ -1,61 +1,55 @@
 package se.shitchat.shitchatapp;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.List;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
-public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
+public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.SearchHolder> {
 
-    private List<User> userList;
-    private ViewGroup parent;
 
-    public SearchAdapter(List<User> userList) {
+    public SearchAdapter(@NonNull FirestoreRecyclerOptions<User> options) {
+        super(options);
+    }
 
-        this.userList = userList;
+    private static void onUserClick(View view) {
+        Intent i = new Intent(view.getContext(), MessageActivity.class);
+
+        view.getContext().startActivity(i);
+
+    }
+
+    @Override
+    protected void onBindViewHolder(@NonNull SearchHolder holder, int position, @NonNull User model) {
+
+        holder.username.setText(model.getUsername());
+        holder.username.setOnClickListener(SearchAdapter::onUserClick);
 
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public SearchHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_layout, parent, false);
-        return new ViewHolder(view);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.search_item,viewGroup, false);
 
+        return new SearchHolder(v);
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
+    class SearchHolder extends RecyclerView.ViewHolder {
 
-         viewHolder.userName.setText(userList.get(userList.size()).getUsername());
+        TextView username;
 
-
-    }
-
-    @Override
-    public int getItemCount() {
-        return  0;
-
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-
-        View view;
-
-        public TextView userName;
-
-        public ViewHolder(@NonNull View itemView) {
+        public SearchHolder(@NonNull View itemView) {
             super(itemView);
-
-            view = itemView;
-
-            userName = view.findViewById(R.id.name_text);
-
+            username = itemView.findViewById(R.id.userUsername);
         }
     }
 

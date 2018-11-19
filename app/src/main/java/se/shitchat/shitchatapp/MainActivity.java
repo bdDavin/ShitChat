@@ -211,6 +211,9 @@ public class MainActivity extends AppCompatActivity {
         //sends chat to db
         db.collection("groups").add(chat);
         /***********************************/
+        Intent i = new Intent(this, SearchActivity.class);
+        startActivity(i);
+
     }
 
     public void enterProfile(MenuItem item) {
