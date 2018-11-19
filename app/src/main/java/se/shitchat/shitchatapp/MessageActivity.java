@@ -167,7 +167,8 @@ public class MessageActivity extends AppCompatActivity {
         db.collection("groups").document(groupId)
                 .collection("messages").add(message);
 
-        db.collection("groups").document(groupId).update("lasUpdated", message.getCreationDate());
+        //update the timing on group
+        db.collection("groups").document(groupId).update("lastUpdated", message.getCreationDate());
 
 
     }

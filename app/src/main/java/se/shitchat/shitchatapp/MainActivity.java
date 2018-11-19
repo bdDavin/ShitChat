@@ -20,7 +20,9 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -75,8 +77,8 @@ public class MainActivity extends AppCompatActivity {
     public void initRecycler(){
         //frågan för databasen
         Query query = db.collection("groups")
-                //.whereArrayContains("userId", userUid)
-                .orderBy("name");
+                .whereArrayContains("userId", userUid)
+                .orderBy("lastUpdated", Query.Direction.DESCENDING);
 
         //hämtar datan lägger i Chat.class
         FirestoreRecyclerOptions<Chat> options = new FirestoreRecyclerOptions.Builder<Chat>()
