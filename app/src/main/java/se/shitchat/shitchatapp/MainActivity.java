@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 holder.chatsParent.setOnClickListener(v -> {
                     Intent i = new Intent(getApplicationContext(), MessageActivity.class);
                     i.putExtra("groupId", groupId);
-                    i.putExtra("groupNAme", groupName);
+                    i.putExtra("groupName", groupName);
                     startActivity(i);
                     //temporär för att visa vilket grupp id som skickas med
                     Toast.makeText(getApplicationContext(), groupId, Toast.LENGTH_SHORT).show();
