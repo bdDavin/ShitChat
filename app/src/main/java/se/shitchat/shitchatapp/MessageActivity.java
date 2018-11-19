@@ -167,6 +167,9 @@ public class MessageActivity extends AppCompatActivity {
         db.collection("groups").document(groupId)
                 .collection("messages").add(message);
 
+        db.collection("groups").document(groupId).update("lasUpdated", message.getCreationDate());
+
+
     }
 
     private String getInput() {

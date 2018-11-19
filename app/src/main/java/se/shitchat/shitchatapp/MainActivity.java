@@ -24,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     public void initRecycler(){
         //frågan för databasen
         Query query = db.collection("groups")
-                .whereArrayContains("users", userUid)
+                //.whereArrayContains("userId", userUid)
                 .orderBy("name");
 
         //hämtar datan lägger i Chat.class
@@ -196,14 +197,18 @@ public class MainActivity extends AppCompatActivity {
                 Snackbar.LENGTH_LONG)
                 .show();
     }
-    public int i = 0;
+
     public void newMessage(View view) {
 
-        /****************testar*************/
+        /****************testar att skapa grupp*************/
         String groupName = "skapad grupp";
         Chat chat = new Chat(groupName);
         String userId = mAuth.getInstance().getCurrentUser().getUid();
-        chat.addUser(userId);
+        String userName = mAuth.getInstance().getCurrentUser().getDisplayName();
+        chat.addUser(userName, userId);
+
+
+        //sends chat to db
         db.collection("groups").add(chat);
         /***********************************/
     }
