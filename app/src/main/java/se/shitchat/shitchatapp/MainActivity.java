@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 holder.chatsUsername.setText(chatModel.getName());
                 //frågar databasen efter det senaste meddelandet i gruppen och sätter det i vyn
                 String groupId = getSnapshots().getSnapshot(position).getId();
+                String groupName = getSnapshots().getSnapshot(position).getString("name");
                 db.collection("groups")
                         .document(groupId)
                         .collection("messages")
@@ -108,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 holder.chatsParent.setOnClickListener(v -> {
                     Intent i = new Intent(getApplicationContext(), MessageActivity.class);
                     i.putExtra("groupId", groupId);
+                    i.putExtra("groupNAme", groupName);
                     startActivity(i);
                     //temporär för att visa vilket grupp id som skickas med
                     Toast.makeText(getApplicationContext(), groupId, Toast.LENGTH_SHORT).show();
