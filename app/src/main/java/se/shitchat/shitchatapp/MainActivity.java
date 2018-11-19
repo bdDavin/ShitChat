@@ -196,8 +196,14 @@ public class MainActivity extends AppCompatActivity {
     }
     public int i = 0;
     public void newMessage(View view) {
-        Intent i = new Intent(this, MessageActivity.class);
-        startActivity(i);
+
+        /****************testar*************/
+        String groupName = "skapad grupp";
+        Chat chat = new Chat(groupName);
+        String userId = mAuth.getInstance().getCurrentUser().getUid();
+        chat.addUser(userId);
+        db.collection("groups").add(chat);
+        /***********************************/
     }
 
     public void enterProfile(MenuItem item) {
