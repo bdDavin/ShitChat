@@ -44,12 +44,13 @@ class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerView.View
             //TODO load image from url = model.getImage()
             //hold.pictureView.setImageResource(model.getImage());
 
-            hold.pictureView.setVisibility(View.GONE);
-        }
-        else {
+            if (hold.pictureView.getDrawable() != null);
             hold.pictureView.setVisibility(View.VISIBLE);
         }
-        
+        else {
+            hold.pictureView.setVisibility(View.GONE);
+        }
+
     }
 
     @NonNull

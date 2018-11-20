@@ -2,9 +2,6 @@ package se.shitchat.shitchatapp;
 
 
 
-
-import android.graphics.drawable.Drawable;
-
 import com.google.firebase.firestore.ServerTimestamp;
 
 
@@ -22,10 +19,10 @@ class Message {
     private String message;
     private String uid;
     private String name;
-    private @ServerTimestamp Date timeStamp;
+
+    @ServerTimestamp
+    private Date timeStamp;
     private String creationDate;
-
-
     private String image;
 
 
