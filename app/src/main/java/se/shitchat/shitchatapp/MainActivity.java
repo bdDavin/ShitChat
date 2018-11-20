@@ -2,6 +2,7 @@ package se.shitchat.shitchatapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -212,6 +213,8 @@ public class MainActivity extends AppCompatActivity {
         db.collection("groups").add(chat);
         /***********************************/
         Intent i = new Intent(this, SearchActivity.class);
+//        i.putExtra("mAuth", (Parcelable) mAuth);
+//        i.putExtra("db", (Parcelable) db);
         startActivity(i);
 
     }

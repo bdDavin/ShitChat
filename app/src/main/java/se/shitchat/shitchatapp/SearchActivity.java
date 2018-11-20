@@ -8,15 +8,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.SearchView;
-
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-
 public class SearchActivity extends AppCompatActivity {
 
-    private static final String TAG = "Firelog";
     private Toolbar searchToolbar;
     private FirebaseFirestore db;
     private RecyclerView searchRecycler;
@@ -26,7 +23,7 @@ public class SearchActivity extends AppCompatActivity {
     private EditText input;
     private Query query;
     private String searchInput;
-    private SearchView searchView;
+    private FirebaseAuth mAuth;
 
 
     @Override
@@ -34,20 +31,32 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        input = findViewById(R.id.editText);
+        searchButton = findViewById(R.id.imageButtonSearch);
         searchToolbar = findViewById(R.id.searchToolbar);
         searchRecycler = findViewById(R.id.searchRecyclerView);
 
         setSupportActionBar(searchToolbar);
+        mAuth = FirebaseAuth.getInstance();
 
         db = FirebaseFirestore.getInstance();
 
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-        userDb = db.collection("users");
+                searchInput = input.getText().toString();
 
-        setUpSearchRecycler();
+                userDb = db.collection("users").whereEqualTo("username", searchInput);
 
-        searchAdapter.startListening();
+                setUpSearchRecycler();
 
+                searchAdapter.startListening();
+
+
+
+            }
+        });
 
     }
 
