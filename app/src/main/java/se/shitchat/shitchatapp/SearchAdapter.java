@@ -33,19 +33,7 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
 
     @Override
     protected void onBindViewHolder(@NonNull SearchHolder holder, int position, @NonNull User model) {
-
-//        SearchActivity searchActivity = new SearchActivity();
-//
-//        String gga = searchActivity.getSearchInput();
-//        String userName = model.getUsername();
-//        for (int i = 0; i < 10; i++) {
-//
-//            if (userName.contains(gga)) {
-//
-//
-//            }
-//
-//        }
+        
         holder.username.setText(model.getUsername());
 
         holder.userParent.setOnClickListener(v -> {
@@ -69,9 +57,6 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
                     v.getContext().startActivity(i);
                 }
             });
-
-
-
 
         });
     }

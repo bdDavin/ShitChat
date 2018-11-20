@@ -210,20 +210,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void newMessage(View view) {
 
-        /****************testar att skapa grupp*************/
-        String groupName = "skapad grupp";
-        Chat chat = new Chat(groupName);
-        String userId = mAuth.getInstance().getCurrentUser().getUid();
-        String userName = mAuth.getInstance().getCurrentUser().getDisplayName();
-        chat.addUser(userName, userId);
-
-
-        //sends chat to db
-        db.collection("groups").add(chat);
-        /***********************************/
         Intent i = new Intent(this, SearchActivity.class);
-//        i.putExtra("mAuth", (Parcelable) mAuth);
-//        i.putExtra("db", (Parcelable) db);
         startActivity(i);
 
     }
