@@ -138,6 +138,7 @@ public class MessageActivity extends AppCompatActivity {
         super.onStop();
         //stop updating from db
         adapter.stopListening();
+        active = false;
     }
 
     private void initialization() {
@@ -240,7 +241,7 @@ public class MessageActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-    public void addImagePresseed(View view) {
+    public void addImagePressed(View view) {
         image = !image;
         imageUrl = "R.drawable.default_profile";
     }

@@ -92,7 +92,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull ChatsViewHolder holder, int position, @NonNull Chat chatModel) {
                 //sätter datan till viewsen
-                holder.chatsUsername.setText(chatModel.getName());
+                if (!chatModel.getName().equals("default")) {
+                    holder.chatsUsername.setText(chatModel.getName());
+                }else{
+                    ArrayList<String> names = chatModel.getUserNames();
+                    String namesFormat = "";
+                    for (int i = 0; i < names.size(); i++) {
+                        if (!names.get(i).equalsIgnoreCase(mAuth.getCurrentUser().getDisplayName())) {
+                            namesFormat = namesFormat + names.get(i) + " ";
+                        }
+                    }
+                    holder.chatsUsername.setText(namesFormat);
+                }
+
+
                 //frågar databasen efter det senaste meddelandet i gruppen och sätter det i vyn
                 String groupId = getSnapshots().getSnapshot(position).getId();
                 String groupName = getSnapshots().getSnapshot(position).getString("name");
@@ -107,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                                 holder.lastMessage.setText(m);
                             }
                         });
+
                 //sätter en onClick på alla items så när man klickar öppnas meddelandeaktivitetn
                 //och skickar med grupp dokumentets namn
                 holder.chatsParent.setOnClickListener(v -> {

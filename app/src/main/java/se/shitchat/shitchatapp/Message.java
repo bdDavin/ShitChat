@@ -37,8 +37,6 @@ class Message {
     }
 
     public String getCreationDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        //formatter.format(serverTime);
         return creationDate;
     }
 
