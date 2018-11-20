@@ -20,7 +20,9 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -116,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
                                 holder.lastMessage.setText(m);
                             }
                         });
+
                 //sätter en onClick på alla items så när man klickar öppnas meddelandeaktivitetn
                 //och skickar med grupp dokumentets namn
                 holder.chatsParent.setOnClickListener(v -> {

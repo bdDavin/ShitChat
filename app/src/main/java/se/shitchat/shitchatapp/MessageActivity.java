@@ -5,12 +5,17 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -20,20 +25,25 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
 
+
 import java.util.Objects;
 
 
 public class MessageActivity extends AppCompatActivity {
 
-    private Button sendButton;
+    private ImageButton sendButton;
     private EditText ediMessage;
     private FirebaseFirestore db;
     private RecyclerView messageRecycler;
+    private ImageView inputIndicator;
     private MessageAdapter adapter;
 
     //from group
     private String groupId = "kemywcCWdHKO5ESZpSZn";
     String groupName = "Benjamin test grupp";
+    private boolean image;
+    private String imageUrl;
+    private boolean active;
 
 
     @Override
@@ -52,7 +62,7 @@ public class MessageActivity extends AppCompatActivity {
         }
 
 
-        initalization();
+        initialization();
 
 
         //sendbutton
@@ -128,9 +138,10 @@ public class MessageActivity extends AppCompatActivity {
         super.onStop();
         //stop updating from db
         adapter.stopListening();
+        active = false;
     }
 
-    private void initalization() {
+    private void initialization() {
         db = FirebaseFirestore.getInstance();
         //instances firestore
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
@@ -139,6 +150,41 @@ public class MessageActivity extends AppCompatActivity {
         ediMessage = findViewById(R.id.message_edit);
         sendButton = findViewById(R.id.send_button);
         messageRecycler = findViewById(R.id.recyclerView);
+        inputIndicator = findViewById(R.id.image_view_active);
+
+        //adds input update
+        ediMessage.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.i("input", "after");
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                Log.i("input", "before");
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                Log.i("input", "on");
+                if( s.length() >= 1) {
+                    Log.i("input", "true");
+                    active = true;
+                    displayTyping();
+                }
+                else if (s.length() == 0) {
+                    active = false;
+                    Log.i("input", "false");
+                    displayTyping();
+                }
+
+            }
+        });
+
+
     }
 
     private void sendButtonPressed(View v) {
@@ -163,10 +209,18 @@ public class MessageActivity extends AppCompatActivity {
         message.setName(name);
         message.setCreationDate();
 
+
+
+        //adds image
+        if (image) {
+            message.setImage(imageUrl);
+        }
+
         //sends message to database
         db.collection("groups").document(groupId)
                 .collection("messages").add(message);
 
+        //update the timing on group
         db.collection("groups").document(groupId).update("lastUpdated", message.getCreationDate());
 
 
@@ -187,5 +241,19 @@ public class MessageActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    public void addImagePressed(View view) {
+        image = !image;
+        imageUrl = "R.drawable.default_profile";
+    }
 
+
+
+    private void displayTyping() {
+        if (active) {
+            inputIndicator.setVisibility(View.VISIBLE);
+        }
+        else {
+            inputIndicator.setVisibility(View.GONE);
+        }
+    }
 }

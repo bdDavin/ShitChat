@@ -26,16 +26,25 @@
 
             <TextView
                 android:id="@+id/text_view_sender"
-                tools:text="Timi"
-                android:textSize="@dimen/default_message_text_size"
-                android:textColor="@color/default_bubble_color_send_text"
-                android:layout_gravity="center_vertical|start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|start"
                 android:layout_marginBottom="4dp"
+                android:textColor="@color/default_bubble_color_send_text"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                android:visibility="gone"
-                tools:visibility="visible"/>
+                android:visibility="visible"
+                tools:text="Timi"
+                tools:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="184dp"
+                android:layout_gravity="center_vertical|start"
+                android:layout_marginBottom="4dp"
+                android:visibility="visible"
+                tools:srcCompat="@tools:sample/backgrounds/scenic[0]" />
 
             <TextView
                 android:id="@+id/text_view_message"

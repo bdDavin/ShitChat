@@ -2,7 +2,6 @@ package se.shitchat.shitchatapp;
 
 
 
-
 import com.google.firebase.firestore.ServerTimestamp;
 
 
@@ -20,8 +19,11 @@ class Message {
     private String message;
     private String uid;
     private String name;
-    private @ServerTimestamp Date timeStamp;
+
+    @ServerTimestamp
+    private Date timeStamp;
     private String creationDate;
+    private String image;
 
 
     //Constructor (Firebase)
@@ -35,8 +37,6 @@ class Message {
     }
 
     public String getCreationDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        //formatter.format(serverTime);
         return creationDate;
     }
 
@@ -79,5 +79,14 @@ class Message {
     public String getDisplayTime() {
         //only displays HH:mm
         return creationDate.substring(11, 16);
+    }
+
+    public String getImage() {
+        return this.image;
+    }
+
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }
