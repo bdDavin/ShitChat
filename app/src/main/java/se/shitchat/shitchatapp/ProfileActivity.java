@@ -22,7 +22,6 @@ public class ProfileActivity extends AppCompatActivity {
         TextView userName = findViewById(R.id.username_text);
         ImageView userImage = findViewById(R.id.profile_image);
 
-
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

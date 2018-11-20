@@ -60,14 +60,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (mAuth.getCurrentUser() != null) {
+        if (adapter != null) {
             adapter.startListening();
         }
     }
     @Override
     protected void onStop() {
         super.onStop();
-        if (mAuth.getCurrentUser() != null) {
+        if (adapter != null) {
             adapter.stopListening();
         }
     }
@@ -75,8 +75,8 @@ public class MainActivity extends AppCompatActivity {
     public void initRecycler(){
         //frågan för databasen
         Query query = db.collection("groups")
-                //.whereArrayContains("userId", userUid)
-                .orderBy("name");
+                .whereArrayContains("userId", userUid)
+                .orderBy("lastUpdated", Query.Direction.DESCENDING);
 
         //hämtar datan lägger i Chat.class
         FirestoreRecyclerOptions<Chat> options = new FirestoreRecyclerOptions.Builder<Chat>()
@@ -90,7 +90,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull ChatsViewHolder holder, int position, @NonNull Chat chatModel) {
                 //sätter datan till viewsen
-                holder.chatsUsername.setText(chatModel.getName());
+                if (!chatModel.getName().equals("default")) {
+                    holder.chatsUsername.setText(chatModel.getName());
+                }else{
+                    ArrayList<String> names = chatModel.getUserNames();
+                    String namesFormat = "";
+                    for (int i = 0; i < names.size(); i++) {
+                        if (!names.get(i).equalsIgnoreCase(mAuth.getCurrentUser().getDisplayName())) {
+                            namesFormat = namesFormat + names.get(i) + " ";
+                        }
+                    }
+                    holder.chatsUsername.setText(namesFormat);
+                }
                 //frågar databasen efter det senaste meddelandet i gruppen och sätter det i vyn
                 String groupId = getSnapshots().getSnapshot(position).getId();
                 String groupName = getSnapshots().getSnapshot(position).getString("name");
@@ -115,6 +126,8 @@ public class MainActivity extends AppCompatActivity {
                     //temporär för att visa vilket grupp id som skickas med
                     Toast.makeText(getApplicationContext(), groupId, Toast.LENGTH_SHORT).show();
                 });
+
+                //holder.chatsParent;
             }
             @NonNull
             @Override
@@ -150,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
             userUid = mAuth.getCurrentUser().getUid();
             initRecycler();
             showSignedInSnack();
+
         }
     }
 
