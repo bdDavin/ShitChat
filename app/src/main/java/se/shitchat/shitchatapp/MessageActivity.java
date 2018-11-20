@@ -2,6 +2,7 @@ package se.shitchat.shitchatapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,14 +19,19 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 
+import com.firebase.ui.auth.viewmodel.AuthViewModelBase;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
 
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 
@@ -44,6 +50,7 @@ public class MessageActivity extends AppCompatActivity {
     private boolean image;
     private String imageUrl;
     private boolean active;
+    private Chat chat;
 
 
     @Override
@@ -58,7 +65,7 @@ public class MessageActivity extends AppCompatActivity {
         groupName = intent.getStringExtra("groupName");
 
         if (groupName == null) {
-            groupName = "namnet laddas ej";
+            groupName = "inget namn skickas med";
         }
 
 
@@ -98,9 +105,64 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-        //change toolbar to groupname
-        Objects.requireNonNull(getSupportActionBar()).setTitle(groupName);
+        //get group
+       chat = getGroup();
 
+        //change toolbar to groupname
+        Objects.requireNonNull(getSupportActionBar()).setTitle(getDisplayName());
+    }
+
+    private Chat getGroup() {
+        //frågar databasen efter det senaste meddelandet i gruppen och sätter det i vyn
+
+        final Chat[] group = new Chat[1];
+
+       db.collection("groups")
+                .document(groupId).get().addOnCompleteListener(task -> {
+                    DocumentSnapshot document = task.getResult();
+
+                    if (document.exists()) {
+                         group[0] = document.toObject(Chat.class);
+                         document.get("userNames");
+
+                    }
+                });
+
+        return group[0];
+
+    }
+
+    private String getDisplayName() {
+
+
+        if (chat == null) { //TODO chat is null
+
+            Log.i("toolbar", "setToolbar: 1");
+            return "Group non existing";
+        }
+        //if name is not default set name
+        else if (!chat.getName().equals("default")) {
+            //if name is default set name to users
+            Log.i("toolbar", "setToolbar: 2");
+            return chat.getName();
+        }
+        else
+            {
+            ArrayList<String> names = chat.getUserNames();
+            String namesFormat = "";
+            //loop all users in grpup and add them to string
+            for (int i = 0; i < names.size(); i++) {
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+                //excloude yourself
+                if (!names.get(i).equalsIgnoreCase(mAuth.getCurrentUser().getDisplayName())) {
+                    namesFormat = namesFormat + names.get(i) + " ";
+                }
+            }
+
+                Log.i("toolbar", "setToolbar: 3");
+            return namesFormat;
+        }
     }
 
     private void setUpRecyclerView() {
@@ -238,6 +300,7 @@ public class MessageActivity extends AppCompatActivity {
 
     public void searchUsers(MenuItem item) {
         Intent i = new Intent(this, SearchActivity.class);
+        i.putExtra("groupId", groupId);
         startActivity(i);
     }
 

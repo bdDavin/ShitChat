@@ -41,6 +41,9 @@ public class SearchActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
+        //skickar med group id (Singelton ish)
+        SearchAdapter.groupID = getIntent().getStringExtra("groupId");
+
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
