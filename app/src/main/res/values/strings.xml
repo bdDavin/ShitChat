@@ -7,5 +7,7 @@
     <string name="profile">Profile</string>
     <string name="send_Button">Send</string>
     <string name="message">Message</string>
+    <string name="searchImage">Search Image</string>
+    <string name="username">Username</string>
     <string name="log_in_failed">Log in failed, try again later</string>
 </resources>

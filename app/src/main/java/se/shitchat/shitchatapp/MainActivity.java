@@ -125,8 +125,6 @@ public class MainActivity extends AppCompatActivity {
                     //temporär för att visa vilket grupp id som skickas med
                     Toast.makeText(getApplicationContext(), groupId, Toast.LENGTH_SHORT).show();
                 });
-
-                //holder.chatsParent;
             }
             @NonNull
             @Override
@@ -162,9 +160,10 @@ public class MainActivity extends AppCompatActivity {
             userUid = mAuth.getCurrentUser().getUid();
             initRecycler();
             showSignedInSnack();
-
         }
     }
+
+
     @Override //Kollar om man inlogg gick igenom
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -189,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -209,7 +209,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void newMessage(View view) {
-        
+
+        /****************testar att skapa grupp*************/
+        String groupName = "skapad grupp";
+        Chat chat = new Chat(groupName);
+        String userId = mAuth.getInstance().getCurrentUser().getUid();
+        String userName = mAuth.getInstance().getCurrentUser().getDisplayName();
+        chat.addUser(userName, userId);
+
+
+        //sends chat to db
+        db.collection("groups").add(chat);
+        /***********************************/
+        Intent i = new Intent(this, SearchActivity.class);
+//        i.putExtra("mAuth", (Parcelable) mAuth);
+//        i.putExtra("db", (Parcelable) db);
+        startActivity(i);
+
     }
 
     public void enterProfile(MenuItem item) {
