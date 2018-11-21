@@ -3,28 +3,31 @@ package se.shitchat.shitchatapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,6 +61,50 @@ public class MainActivity extends AppCompatActivity {
 
         //skapar och kollar login
         createLogInScreen();
+        //Add Swipe to delete functionality
+        SwipeToDeleteCallback swipeHandler = new SwipeToDeleteCallback(this) {
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+                //adapter.removeItem(viewHolder.getAdapterPosition());
+                String adapterPosId = adapter.getSnapshots().getSnapshot(viewHolder.getAdapterPosition()).getId();
+                db.collection("groups")
+                        .document(adapter.getSnapshots().getSnapshot(viewHolder.getAdapterPosition()).getId())
+                        .delete()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                db.collection("groups")
+                                        .document(adapterPosId)
+                                        .collection("messages")
+                                        .get()
+                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                List<DocumentSnapshot> m = queryDocumentSnapshots.getDocuments();
+                                                for (DocumentSnapshot mId:m) {
+                                                    db.collection("groups")
+                                                            .document(adapter.getSnapshots().getSnapshot(viewHolder.getAdapterPosition()).getId())
+                                                            .collection("messages")
+                                                            .document(mId.getId())
+                                                            .delete();
+
+                                                }
+                                            }
+                                        });
+
+                                adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                            }
+                        });
+            }
+        };
+        ItemTouchHelper touchHelper = new ItemTouchHelper(swipeHandler);
+        touchHelper.attachToRecyclerView(chatsRecyclerView);
     }
     @Override
     protected void onStart() {
@@ -116,9 +163,9 @@ public class MainActivity extends AppCompatActivity {
                             if (!snapshot.isEmpty()) {
                                 String m = snapshot.getDocuments().get(0).getString("message");
                                 holder.lastMessage.setText(m);
+                                holder.date.setText(chatModel.getLastUpdated());
                             }
                         });
-
                 //sätter en onClick på alla items så när man klickar öppnas meddelandeaktivitetn
                 //och skickar med grupp dokumentets namn
                 holder.chatsParent.setOnClickListener(v -> {
@@ -212,10 +259,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void newMessage(View view) {
-
         Intent i = new Intent(this, SearchActivity.class);
         startActivity(i);
-
     }
 
     public void enterProfile(MenuItem item) {
@@ -231,7 +276,8 @@ public class MainActivity extends AppCompatActivity {
     private class ChatsViewHolder extends RecyclerView.ViewHolder {
         private TextView chatsUsername;
         private TextView lastMessage;
-        private LinearLayout chatsParent;
+        private ConstraintLayout chatsParent;
+        private TextView date;
 
         public ChatsViewHolder(View itemView) {
             super(itemView);
@@ -239,6 +285,7 @@ public class MainActivity extends AppCompatActivity {
             chatsUsername = itemView.findViewById(R.id.chats_username);
             lastMessage = itemView.findViewById(R.id.chats_last_message);
             chatsParent = itemView.findViewById(R.id.chats_parent);
+            date = itemView.findViewById(R.id.chats_date);
         }
     }
 }
