@@ -46,7 +46,7 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
 
             String groupId = groupID;
 
-            //adds member or creates new group
+            //adds member to group
             if(groupId != null) {
                 groupID = null;
                 DocumentReference group = db.collection("groups").document(groupId);
@@ -65,6 +65,7 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
                 });
 
             }
+            //creates a new group
             else {
                 //creates new group
                 String groupName = "default";

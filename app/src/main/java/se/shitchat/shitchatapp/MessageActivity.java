@@ -13,26 +13,31 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 
-import com.firebase.ui.auth.viewmodel.AuthViewModelBase;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
 
 
 import java.util.ArrayList;
 import java.util.Objects;
+
+import javax.annotation.Nullable;
 
 
 public class MessageActivity extends AppCompatActivity {
@@ -81,10 +86,8 @@ public class MessageActivity extends AppCompatActivity {
 
         //send message when enter key is pushed
         ediMessage.setOnKeyListener((v, keyCode, event) -> {
-            if (event.getAction() == KeyEvent.ACTION_DOWN)
-            {
-                switch (keyCode)
-                {
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                switch (keyCode) {
                     case KeyEvent.KEYCODE_DPAD_CENTER:
                     case KeyEvent.KEYCODE_ENTER:
                         sendButtonPressed(v);
@@ -106,10 +109,20 @@ public class MessageActivity extends AppCompatActivity {
         });
 
         //get group
-       chat = getGroup();
+        // chat = getGroup();
 
         //change toolbar to groupname
-        Objects.requireNonNull(getSupportActionBar()).setTitle(getDisplayName());
+        Objects.requireNonNull(getSupportActionBar()).setTitle(groupName);
+
+        db.collection("groups").document(groupId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+               displayTyping();
+                Log.i("display", "onEvent: displayTyping");
+            }
+        });
+
+
     }
 
     private Chat getGroup() {
@@ -132,7 +145,15 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
-    private String getDisplayName() {
+    private String getToolbarName() {
+
+
+        DocumentReference group = db.collection("groups").document(groupId);
+
+        group.getClass();
+
+        // Atomically add a new region to the "UserNames" array field.
+        //group.update("userNames", FieldValue.arrayUnion(model.getUsername()));
 
 
         if (chat == null) { //TODO chat is null
@@ -213,7 +234,12 @@ public class MessageActivity extends AppCompatActivity {
         sendButton = findViewById(R.id.send_button);
         messageRecycler = findViewById(R.id.recyclerView);
         inputIndicator = findViewById(R.id.image_view_active);
+        textChanging();
 
+
+    }
+
+    private void textChanging() {
         //adds input update
         ediMessage.addTextChangedListener(new TextWatcher() {
 
@@ -234,19 +260,18 @@ public class MessageActivity extends AppCompatActivity {
                 Log.i("input", "on");
                 if( s.length() >= 1) {
                     Log.i("input", "true");
+                    db.collection("groups").document(groupId).update("active", true);
                     active = true;
-                    displayTyping();
+
                 }
                 else if (s.length() == 0) {
+                    db.collection("groups").document(groupId).update("active", false);
                     active = false;
                     Log.i("input", "false");
-                    displayTyping();
                 }
 
             }
         });
-
-
     }
 
     private void sendButtonPressed(View v) {
@@ -312,11 +337,32 @@ public class MessageActivity extends AppCompatActivity {
 
 
     private void displayTyping() {
-        if (active) {
+        if (!active && isChatActive()) {
             inputIndicator.setVisibility(View.VISIBLE);
+            Log.i("display", "displayTyping: VISIBLE");
         }
         else {
             inputIndicator.setVisibility(View.GONE);
+            Log.i("display", "displayTyping: GONE");
+        }
+    }
+
+    private boolean isChatActive() { 
+         Boolean a = false;
+
+                db.collection("groups").document(groupId).get().addOnCompleteListener(task -> {
+
+                    Log.i("display", "someone is active");
+                    //TODO returns null
+                    // a = task.getResult().getBoolean("active");
+                });
+
+        if (a == null) {
+            Log.i("display", "everything is null");
+            return false;
+        }
+        else {
+            return a;
         }
     }
 }
