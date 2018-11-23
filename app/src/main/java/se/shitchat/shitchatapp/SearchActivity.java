@@ -95,8 +95,6 @@ public class SearchActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         searchAdapter.stopListening();
+        finish();
     }
 }
-
-
-

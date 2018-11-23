@@ -21,13 +21,10 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,51 +58,9 @@ public class MainActivity extends AppCompatActivity {
 
         //skapar och kollar login
         createLogInScreen();
-        //Add Swipe to delete functionality
-        SwipeToDeleteCallback swipeHandler = new SwipeToDeleteCallback(this) {
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                //adapter.removeItem(viewHolder.getAdapterPosition());
-                String adapterPosId = adapter.getSnapshots().getSnapshot(viewHolder.getAdapterPosition()).getId();
-                db.collection("groups")
-                        .document(adapter.getSnapshots().getSnapshot(viewHolder.getAdapterPosition()).getId())
-                        .delete()
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                db.collection("groups")
-                                        .document(adapterPosId)
-                                        .collection("messages")
-                                        .get()
-                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                                List<DocumentSnapshot> m = queryDocumentSnapshots.getDocuments();
-                                                for (DocumentSnapshot mId:m) {
-                                                    db.collection("groups")
-                                                            .document(adapter.getSnapshots().getSnapshot(viewHolder.getAdapterPosition()).getId())
-                                                            .collection("messages")
-                                                            .document(mId.getId())
-                                                            .delete();
-
-                                                }
-                                            }
-                                        });
-
-                                adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-
-                            }
-                        });
-            }
-        };
-        ItemTouchHelper touchHelper = new ItemTouchHelper(swipeHandler);
-        touchHelper.attachToRecyclerView(chatsRecyclerView);
+        swipeToDelete();
     }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -153,9 +108,9 @@ public class MainActivity extends AppCompatActivity {
                 }
                 //frågar databasen efter det senaste meddelandet i gruppen och sätter det i vyn
                 String groupId = getSnapshots().getSnapshot(position).getId();
-                String groupName = getSnapshots().getSnapshot(position).getString("name");
                 db.collection("groups")
                         .document(groupId)
+
                         .collection("messages")
                         .orderBy("creationDate", Query.Direction.DESCENDING)
                         .limit(1)
@@ -172,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
                     Intent i = new Intent(getApplicationContext(), MessageActivity.class);
                     i.putExtra("groupId", groupId);
                     startActivity(i);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     //temporär för att visa vilket grupp id som skickas med
                     Toast.makeText(getApplicationContext(), groupId, Toast.LENGTH_SHORT).show();
                 });
@@ -184,6 +140,37 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         chatsRecyclerView.setAdapter(adapter);
+    }
+
+    private void swipeToDelete() {
+        //Add Swipe to delete functionality
+        SwipeToDeleteCallback swipeHandler = new SwipeToDeleteCallback(this) {
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+                //adapter.removeItem(viewHolder.getAdapterPosition());
+                String adapterPosId = adapter.getSnapshots().getSnapshot(viewHolder.getAdapterPosition()).getId();
+                db.collection("groups")
+                        .document(adapterPosId)
+                        .collection("messages")
+                        .get()
+                        .addOnSuccessListener(queryDocumentSnapshots -> {
+                            List<DocumentSnapshot> m = queryDocumentSnapshots.getDocuments();
+                            for (DocumentSnapshot mId:m) {
+                                db.collection("groups")
+                                        .document(adapterPosId)
+                                        .collection("messages")
+                                        .document(mId.getId())
+                                        .delete();
+                            }
+                        });
+                db.collection("groups")
+                        .document(adapter.getSnapshots().getSnapshot(viewHolder.getAdapterPosition()).getId())
+                        .delete()
+                        .addOnSuccessListener(aVoid -> adapter.notifyItemRemoved(viewHolder.getAdapterPosition()));
+            }
+        };
+        ItemTouchHelper touchHelper = new ItemTouchHelper(swipeHandler);
+        touchHelper.attachToRecyclerView(chatsRecyclerView);
     }
 
     //Skapar login Aktiviteten
@@ -212,7 +199,6 @@ public class MainActivity extends AppCompatActivity {
             showSignedInSnack();
         }
     }
-
 
     @Override //Kollar om man inlogg gick igenom
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
