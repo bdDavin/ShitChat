@@ -1,16 +1,32 @@
 package se.shitchat.shitchatapp;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private Toolbar t;
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+    private StorageReference storageRef;
+    private TextView userName;
+    private ImageView userImage;
+    private Uri imageUri;
+    private UploadTask uploadTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,20 +35,63 @@ public class ProfileActivity extends AppCompatActivity {
 
         t = findViewById(R.id.profileToolbar);
         setSupportActionBar(t);
-        TextView userName = findViewById(R.id.username_text);
-        ImageView userImage = findViewById(R.id.profile_image);
+        userName = findViewById(R.id.usernameText);
+        userImage = findViewById(R.id.profile_image);
+        userImage.setOnClickListener(v -> changeProfileImage());
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        storageRef = FirebaseStorage.getInstance().getReference();
         //displays username
-        userName.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-        //displays user image
-        if(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl() != null ) {
-            //TODO load in user image
+        userName.setText(mAuth.getCurrentUser().getDisplayName());
+        setProfileImage();
+    }
+
+    private void changeProfileImage() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, 1337);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1337 && resultCode == RESULT_OK && data != null && data.getData() != null){
+            imageUri = data.getData();
+
+            StorageReference imagesRef = storageRef.child("images/"+imageUri.getLastPathSegment());
+            uploadTask = imagesRef.putFile(imageUri);
+            // Register observers to listen for when the download is done or if it fails
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                imagesRef.getDownloadUrl()
+                        .addOnCompleteListener(task -> {
+                            String URL = task.getResult().toString();
+                            db.collection("users")
+                                    .document(mAuth.getCurrentUser().getUid())
+                                    .update("image", URL);
+                            setProfileImage();
+                            Log.d("hej", "onActivityResult: "+ URL);
+                        });
+            });
         }
-        else {
-            userImage.setImageResource(R.drawable.default_profile);
-        }
+    }
+    private void setProfileImage(){
+        db.collection("users")
+                .document(mAuth.getCurrentUser().getUid())
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    String imageUrl = documentSnapshot.getString("image");
+
+                    //displays user image
+                    if (imageUrl == null || imageUrl.equals("default")) {
+                        userImage.setImageResource(R.drawable.default_profile);
+                    } else {
+                        Picasso.get().load(imageUrl).into(userImage);
+                    }
+                });
     }
 }

@@ -4,7 +4,6 @@ package se.shitchat.shitchatapp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.Date;
 
 /**
@@ -13,6 +12,7 @@ import java.util.Date;
 public class Chat {
 
     private String name;
+    private String image;
 
     private ArrayList messages;
     private ArrayList<String> userId;
@@ -23,12 +23,14 @@ public class Chat {
     }
 
     private String lastUpdated;
-    public Chat(){}
+    public Chat(){        image = "default";
+    }
 
     public Chat(String name) {
         this.name = name;
         userId = new ArrayList<>();
         userNames = new ArrayList<>();
+        image = "default";
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
@@ -39,6 +41,8 @@ public class Chat {
         this.name = name;
         this.messages = messages;
         this.userId = users;
+        image = "default";
+
     }
 
     public String getName() {
@@ -77,4 +81,11 @@ public class Chat {
     }
 
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 }
