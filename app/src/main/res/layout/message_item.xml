@@ -64,12 +64,12 @@
 
             <TextView
                 android:id="@+id/text_view_time"
-                tools:text="12:10 am"
-                android:textSize="12sp"
-                android:textColor="@color/default_bubble_color_send_text"
-                android:gravity="center_vertical|start"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|start"
+                android:textColor="@color/colorAccent"
+                android:textSize="12sp"
+                tools:text="12:10 am" />
 
         </LinearLayout>
 

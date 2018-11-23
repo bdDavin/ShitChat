@@ -2,7 +2,6 @@ package se.shitchat.shitchatapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,21 +12,16 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
@@ -54,7 +48,7 @@ public class MessageActivity extends AppCompatActivity {
     String groupName = "Benjamin test grupp";
     private boolean image;
     private String imageUrl;
-    private boolean active;
+    private boolean ImActive;
     private Chat chat;
     private boolean addToChat = false;
 
@@ -116,12 +110,11 @@ public class MessageActivity extends AppCompatActivity {
         //change toolbar to groupname
         Objects.requireNonNull(getSupportActionBar()).setTitle(groupName);
 
-        db.collection("groups").document(groupId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-               displayTyping();
-                Log.i("display", "onEvent: displayTyping");
-            }
+        //test for document change
+        db.collection("groups").document(groupId).addSnapshotListener((documentSnapshot, e) -> {
+
+            Log.i("display", "Document has been updated");
+            displayTyping();
         });
 
 
@@ -223,7 +216,7 @@ public class MessageActivity extends AppCompatActivity {
         super.onStop();
         //stop updating from db
         adapter.stopListening();
-        active = false;
+        ImActive = false;
         finish();
     }
 
@@ -249,6 +242,13 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
+
+
+
+
+    /********************** Is typing *****************************/
+
+
     private void textChanging() {
         //adds input update
         ediMessage.addTextChangedListener(new TextWatcher() {
@@ -267,23 +267,75 @@ public class MessageActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                Log.i("input", "on");
-                if( s.length() >= 1) {
-                    Log.i("input", "true");
+                Log.i("display", "My text field has changed");
+                if( count >= 1) {
+                    Log.i("display", "I started to write");
                     db.collection("groups").document(groupId).update("active", true);
-                    active = true;
-                    displayTyping();
+                    ImActive = true;
                 }
-                else if (s.length() == 0) {
+                else if (count == 0) {
+                    Log.i("display", "I have stopped writing");
                     db.collection("groups").document(groupId).update("active", false);
-                    active = false;
-                    Log.i("input", "false");
-                    displayTyping();
+                    ImActive = false;
                 }
 
             }
         });
     }
+
+
+    private void displayTyping() {
+        if (!ImActive && isChatActive()) {
+            Log.i("display", "buble is VISIBLE");
+            inputIndicator.setVisibility(View.VISIBLE);
+
+        }
+        else {
+            Log.i("display", "buble is GONE");
+            //TODO change to invisible
+            inputIndicator.setVisibility(View.VISIBLE);
+
+        }
+    }
+
+    //is chat active value
+    private Boolean a = false;
+    //returns true if someone is writing
+    private boolean isChatActive() {
+        //standard value
+        a = null;
+
+        //download active field from firebase
+        db.collection("groups").document(groupId).get().addOnCompleteListener(task -> {
+            Log.i("display", "someone is Active");
+
+            //TODO returns null
+            DocumentSnapshot t = task.getResult();
+
+            a = t.getBoolean("active");
+
+
+
+        });
+
+        if (a == null) {
+            Log.i("display", "Could not pull data from acitve field in group");
+            return false;
+        }
+        else {
+            Log.i("display", "group status is: " +a);
+            return a;
+        }
+    }
+
+
+
+
+
+
+
+    /********************** Buttons ***********************/
+
 
     private void sendButtonPressed(View v) {
 
@@ -349,38 +401,6 @@ public class MessageActivity extends AppCompatActivity {
     public void addImagePressed(View view) {
         image = !image;
         imageUrl = "R.drawable.default_profile";
-    }
-
-
-
-    private void displayTyping() {
-        if (!active && isChatActive()) {
-            inputIndicator.setVisibility(View.VISIBLE);
-            Log.i("display", "displayTyping: VISIBLE");
-        }
-        else {
-            inputIndicator.setVisibility(View.GONE);
-            Log.i("display", "displayTyping: GONE");
-        }
-    }
-
-    private boolean isChatActive() {
-         Boolean a = false;
-
-                db.collection("groups").document(groupId).get().addOnCompleteListener(task -> {
-
-                    Log.i("display", "someone is active");
-                    //TODO returns null
-                    // a = task.getResult().getBoolean("active");
-                });
-
-        if (a == null) {
-            Log.i("display", "everything is null");
-            return false;
-        }
-        else {
-            return a;
-        }
     }
 
     //Handles back button
