@@ -51,12 +51,12 @@
 
             <TextView
                 android:id="@+id/text_view_message"
-                tools:text="My name is Timi and I am not a god."
-                android:textSize="@dimen/default_message_text_size"
-                android:textColor="@color/default_bubble_color_send_text"
-                android:gravity="center_vertical|start"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|start"
+                android:textColor="@color/common_google_signin_btn_text_dark_default"
+                android:textSize="@dimen/default_message_text_size"
+                tools:text="My name is Timi and I am not a god." />
 
             <android.support.v4.widget.Space
                 android:layout_width="match_parent"

@@ -44,6 +44,7 @@ public class MessageActivity extends AppCompatActivity {
     private boolean image;
     private String imageUrl;
     private boolean active;
+    private boolean addToChat = false;
 
 
     @Override
@@ -238,7 +239,13 @@ public class MessageActivity extends AppCompatActivity {
 
     public void searchUsers(MenuItem item) {
         Intent i = new Intent(this, SearchActivity.class);
+
+        addToChat = true;
+        i.putExtra("addToChat", addToChat);
+
         startActivity(i);
+
+
     }
 
     public void addImagePressed(View view) {
@@ -255,5 +262,12 @@ public class MessageActivity extends AppCompatActivity {
         else {
             inputIndicator.setVisibility(View.GONE);
         }
+    }
+
+    //Handles back button
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
     }
 }
