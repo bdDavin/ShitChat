@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        app:cardBackgroundColor="@color/default_message_color_rcv"
+        app:cardBackgroundColor="@color/colorAccent"
         app:cardCornerRadius="8dp"
         app:cardUseCompatPadding="true">
 

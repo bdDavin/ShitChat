@@ -45,8 +45,11 @@
 
     <ImageButton
         android:id="@+id/imageButtonSearch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="47dp"
+        android:layout_height="38dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
+        android:background="@color/colorPrimary"
         android:contentDescription="@string/searchImage"
         app:layout_constraintBottom_toTopOf="@+id/searchRecyclerView"
         app:layout_constraintEnd_toEndOf="parent"

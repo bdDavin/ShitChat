@@ -22,16 +22,23 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
     public FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
-
     public SearchAdapter(@NonNull FirestoreRecyclerOptions<User> options) {
 
         super(options);
     }
 
+    //Adds user to item
     @Override
     protected void onBindViewHolder(@NonNull SearchHolder holder, int position, @NonNull User model) {
-        
+
         holder.username.setText(model.getUsername());
+
+        chooseUser(holder, position, model);
+
+    }
+
+    //Adds chosen user to new chat activity
+    private void chooseUser(@NonNull SearchHolder holder, int position, @NonNull User model) {
 
         holder.userParent.setOnClickListener(v -> {
             String groupName = "default";
@@ -53,11 +60,12 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
                     i.putExtra("groupId", newId);
                     v.getContext().startActivity(i);
                 }
+
             });
 
         });
-    }
 
+    }
 
 
     @NonNull
@@ -69,6 +77,7 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
         return new SearchHolder(v);
     }
 
+    //Setup recycler view items
     class SearchHolder extends RecyclerView.ViewHolder {
 
         TextView username;
@@ -79,6 +88,7 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
             username = itemView.findViewById(R.id.userUsername);
             userParent = itemView.findViewById(R.id.user_parent);
         }
+
     }
 
 }

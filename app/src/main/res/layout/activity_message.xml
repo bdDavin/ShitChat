@@ -34,18 +34,18 @@
 
     <ImageButton
         android:id="@+id/send_button"
-        android:layout_width="68dp"
-        android:layout_height="58dp"
+        android:layout_width="58dp"
+        android:layout_height="50dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
-        android:src="@color/colorPrimary"
+        android:background="@color/colorPrimary"
+        android:src="@drawable/ic_search_black_24dp"
         android:text="@string/send_Button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/message_edit"
-        app:layout_constraintVertical_bias="0.8"
-        tools:src="@color/colorPrimary" />
+        app:layout_constraintVertical_bias="0.8" />
 
     <EditText
         android:id="@+id/message_edit"
@@ -70,6 +70,7 @@
         android:layout_width="46dp"
         android:layout_height="46dp"
         android:layout_marginStart="8dp"
+        android:background="@color/colorPrimary"
         android:onClick="addImagePressed"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
