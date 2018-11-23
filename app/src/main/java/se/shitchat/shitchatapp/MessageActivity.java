@@ -2,6 +2,7 @@ package se.shitchat.shitchatapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,18 +13,31 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
 
+
+import java.util.ArrayList;
 import java.util.Objects;
+
+import javax.annotation.Nullable;
 
 
 public class MessageActivity extends AppCompatActivity {
@@ -41,6 +55,7 @@ public class MessageActivity extends AppCompatActivity {
     private boolean image;
     private String imageUrl;
     private boolean active;
+    private Chat chat;
     private boolean addToChat = false;
 
 
@@ -55,7 +70,7 @@ public class MessageActivity extends AppCompatActivity {
         groupName = intent.getStringExtra("groupName");
 
         if (groupName == null) {
-            groupName = "namnet laddas ej";
+            groupName = "inget namn skickas med";
         }
 
 
@@ -95,9 +110,82 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
+        //get group
+        // chat = getGroup();
+
         //change toolbar to groupname
         Objects.requireNonNull(getSupportActionBar()).setTitle(groupName);
 
+        db.collection("groups").document(groupId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+               displayTyping();
+                Log.i("display", "onEvent: displayTyping");
+            }
+        });
+
+
+    }
+
+    private Chat getGroup() {
+        //frågar databasen efter det senaste meddelandet i gruppen och sätter det i vyn
+
+        final Chat[] group = new Chat[1];
+
+       db.collection("groups")
+                .document(groupId).get().addOnCompleteListener(task -> {
+                    DocumentSnapshot document = task.getResult();
+
+                    if (document.exists()) {
+                         group[0] = document.toObject(Chat.class);
+                         document.get("userNames");
+
+                    }
+                });
+
+        return group[0];
+
+    }
+
+    private String getToolbarName() {
+
+
+        DocumentReference group = db.collection("groups").document(groupId);
+
+        group.getClass();
+
+        // Atomically add a new region to the "UserNames" array field.
+        //group.update("userNames", FieldValue.arrayUnion(model.getUsername()));
+
+
+        if (chat == null) { //TODO chat is null
+
+            Log.i("toolbar", "setToolbar: 1");
+            return "Group non existing";
+        }
+        //if name is not default set name
+        else if (!chat.getName().equals("default")) {
+            //if name is default set name to users
+            Log.i("toolbar", "setToolbar: 2");
+            return chat.getName();
+        }
+        else
+            {
+            ArrayList<String> names = chat.getUserNames();
+            String namesFormat = "";
+            //loop all users in grpup and add them to string
+            for (int i = 0; i < names.size(); i++) {
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+                //excloude yourself
+                if (!names.get(i).equalsIgnoreCase(mAuth.getCurrentUser().getDisplayName())) {
+                    namesFormat = namesFormat + names.get(i) + " ";
+                }
+            }
+
+                Log.i("toolbar", "setToolbar: 3");
+            return namesFormat;
+        }
     }
 
     private void setUpRecyclerView() {
@@ -155,7 +243,12 @@ public class MessageActivity extends AppCompatActivity {
         sendButton = findViewById(R.id.send_button);
         messageRecycler = findViewById(R.id.recyclerView);
         inputIndicator = findViewById(R.id.image_view_active);
+        textChanging();
 
+
+    }
+
+    private void textChanging() {
         //adds input update
         ediMessage.addTextChangedListener(new TextWatcher() {
 
@@ -176,10 +269,12 @@ public class MessageActivity extends AppCompatActivity {
                 Log.i("input", "on");
                 if( s.length() >= 1) {
                     Log.i("input", "true");
+                    db.collection("groups").document(groupId).update("active", true);
                     active = true;
                     displayTyping();
                 }
                 else if (s.length() == 0) {
+                    db.collection("groups").document(groupId).update("active", false);
                     active = false;
                     Log.i("input", "false");
                     displayTyping();
@@ -187,8 +282,6 @@ public class MessageActivity extends AppCompatActivity {
 
             }
         });
-
-
     }
 
     private void sendButtonPressed(View v) {
@@ -246,6 +339,7 @@ public class MessageActivity extends AppCompatActivity {
         addToChat = true;
         i.putExtra("addToChat", addToChat);
 
+        i.putExtra("groupId", groupId);
         startActivity(i);
 
 
@@ -259,11 +353,32 @@ public class MessageActivity extends AppCompatActivity {
 
 
     private void displayTyping() {
-        if (active) {
+        if (!active && isChatActive()) {
             inputIndicator.setVisibility(View.VISIBLE);
+            Log.i("display", "displayTyping: VISIBLE");
         }
         else {
             inputIndicator.setVisibility(View.GONE);
+            Log.i("display", "displayTyping: GONE");
+        }
+    }
+
+    private boolean isChatActive() {
+         Boolean a = false;
+
+                db.collection("groups").document(groupId).get().addOnCompleteListener(task -> {
+
+                    Log.i("display", "someone is active");
+                    //TODO returns null
+                    // a = task.getResult().getBoolean("active");
+                });
+
+        if (a == null) {
+            Log.i("display", "everything is null");
+            return false;
+        }
+        else {
+            return a;
         }
     }
 

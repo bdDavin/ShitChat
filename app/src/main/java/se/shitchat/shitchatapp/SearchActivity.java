@@ -16,14 +16,18 @@ import com.google.firebase.firestore.Query;
 
 public class SearchActivity extends AppCompatActivity {
 
+    private Toolbar searchToolbar;
     private FirebaseFirestore db;
+    private RecyclerView searchRecycler;
     private ImageButton searchButton;
     private SearchAdapter searchAdapter;
     private Query userDb;
     private EditText input;
     private Query query;
     private String searchInput;
-    
+    private FirebaseAuth mAuth;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,14 +36,16 @@ public class SearchActivity extends AppCompatActivity {
         //Initialise widgets
         input = findViewById(R.id.editText);
         searchButton = findViewById(R.id.imageButtonSearch);
-        Toolbar searchToolbar = findViewById(R.id.searchToolbar);
-        RecyclerView searchRecycler = findViewById(R.id.searchRecyclerView);
+        searchToolbar = findViewById(R.id.searchToolbar);
+        searchRecycler = findViewById(R.id.searchRecyclerView);
 
         setSupportActionBar(searchToolbar);
-
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         db = FirebaseFirestore.getInstance();
+
+        //skickar med group id (Singelton ish)
+        SearchAdapter.groupID = getIntent().getStringExtra("groupId");
 
         searchClicked();
 
@@ -66,7 +72,16 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                searchInput = input.getText().toString();
                 searchClicked();
+
+        userDb = db.collection("users").whereEqualTo("username", searchInput);
+
+        setUpSearchRecycler();
+
+        searchAdapter.startListening();
+
+
 
             }
         });
@@ -85,6 +100,13 @@ public class SearchActivity extends AppCompatActivity {
         searchAdapter.startListening();
 
     }
+
+    private String SearchQuery() {
+        searchInput = input.getText().toString();
+
+        return searchInput;
+    }
+
 
     //Fetches data and adds to recyclerView
     private void setUpSearchRecycler() {
