@@ -224,6 +224,7 @@ public class MessageActivity extends AppCompatActivity {
         //stop updating from db
         adapter.stopListening();
         active = false;
+        finish();
     }
 
     @Override
