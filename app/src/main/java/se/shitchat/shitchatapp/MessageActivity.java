@@ -2,6 +2,7 @@ package se.shitchat.shitchatapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +17,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -29,6 +34,8 @@ import com.google.firebase.firestore.Query;
 
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.Nullable;
@@ -53,6 +60,7 @@ public class MessageActivity extends AppCompatActivity {
     private boolean addToChat = false;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +77,21 @@ public class MessageActivity extends AppCompatActivity {
 
 
         initialization();
+
+
+        //loads input indicator with glide
+        Glide.with(this)
+                //.asGif()
+                .load(getDrawable(R.drawable.typing))
+                .into(inputIndicator);
+
+       // GifDrawable() a = new GifDrawable(I)
+
+
+
+        //GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(inputIndicator);
+        //Glide.with(this).load(getDrawable(R.drawable.typing)).into(imageViewTarget);
+
 
 
         //sendbutton
@@ -270,13 +293,13 @@ public class MessageActivity extends AppCompatActivity {
                 Log.i("display", "My text field has changed");
                 if( count >= 1) {
                     Log.i("display", "I started to write");
-                    db.collection("groups").document(groupId).update("active", true);
-                    ImActive = true;
+                    db.collection("groups").document(groupId).update("active", true).addOnCompleteListener(task -> ImActive = true);
+
                 }
                 else if (count == 0) {
                     Log.i("display", "I have stopped writing");
-                    db.collection("groups").document(groupId).update("active", false);
-                    ImActive = false;
+                    db.collection("groups").document(groupId).update("active", false).addOnCompleteListener(task -> ImActive = false);
+
                 }
 
             }
@@ -298,34 +321,65 @@ public class MessageActivity extends AppCompatActivity {
         }
     }
 
-    //is chat active value
-    private Boolean a = false;
+
     //returns true if someone is writing
     private boolean isChatActive() {
         //standard value
-        a = null;
 
+
+        //DocumentSnapshot document = db.collection("groups").document(groupId).;
+
+        //document.getString("username");
         //download active field from firebase
         db.collection("groups").document(groupId).get().addOnCompleteListener(task -> {
-            Log.i("display", "someone is Active");
+                    Log.i("display", "someone is Active");
 
-            //TODO returns null
-            DocumentSnapshot t = task.getResult();
+                    //TODO returns null
+                    DocumentSnapshot t = task.getResult();
+
+            Log.i("display", "chat is: " +t.get("active"));
+
+                });
+
+
+
+
+
+           /* DocumentReference codesRef = db.collection("groups").document(groupId);
+            codesRef.get().addOnCompleteListener(task1 -> {
+                if (task1.isSuccessful()) {
+                    List<String> list = new ArrayList<>();
+
+                    Map<String, Object> map = task1.getResult().getData();
+
+                    map.values();
+                    Object mp = map.get("active");
+                    Log.i("group", "isChatActive: " + mp);
+
+
+                    /*for (Map.Entry<String, Object> entry : map.entrySet()) {
+                        list.add(entry.getKey());
+                        Log.d("Group info", entry.getKey());
+                    }
+                    //Do what you want to do with your list
+                }
+            });
 
             a = t.getBoolean("active");
 
 
 
-        });
+        });*/
 
-        if (a == null) {
+        /*if (a == null) {
             Log.i("display", "Could not pull data from acitve field in group");
             return false;
         }
         else {
             Log.i("display", "group status is: " +a);
             return a;
-        }
+        }*/
+        return false;
     }
 
 

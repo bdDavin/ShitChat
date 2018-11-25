@@ -50,8 +50,8 @@
 
     <EditText
         android:id="@+id/message_edit"
-        android:layout_width="207dp"
-        android:layout_height="44dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -82,10 +82,11 @@
         android:id="@+id/image_view_active"
         android:layout_width="60dp"
         android:layout_height="30dp"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/message_edit"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/typingicon"
         tools:srcCompat="@drawable/typingicon" />
+
 
 </android.support.constraint.ConstraintLayout>
