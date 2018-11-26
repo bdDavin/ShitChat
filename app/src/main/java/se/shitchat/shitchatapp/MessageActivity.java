@@ -31,6 +31,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
+import com.squareup.picasso.Picasso;
 
 
 import java.util.ArrayList;
@@ -316,7 +317,7 @@ public class MessageActivity extends AppCompatActivity {
         else {
             Log.i("display", "buble is GONE");
             //TODO change to invisible
-            inputIndicator.setVisibility(View.VISIBLE);
+            inputIndicator.setVisibility(View.GONE);
 
         }
     }
@@ -326,12 +327,18 @@ public class MessageActivity extends AppCompatActivity {
     private boolean isChatActive() {
         //standard value
 
-
+        final Boolean[] groupIsActive = new Boolean[1];
+        groupIsActive[0] = true;
         //DocumentSnapshot document = db.collection("groups").document(groupId).;
 
         //document.getString("username");
         //download active field from firebase
-        db.collection("groups").document(groupId).get().addOnCompleteListener(task -> {
+
+
+       /* db.collection("groups")
+       .document(groupId)
+       .get()
+       .addOnCompleteListener(task -> {
                     Log.i("display", "someone is Active");
 
                     //TODO returns null
@@ -339,6 +346,24 @@ public class MessageActivity extends AppCompatActivity {
 
             Log.i("display", "chat is: " +t.get("active"));
 
+                });*/
+
+
+        db.collection("groups")
+                .document(groupId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+
+                    //recieves value
+                    Boolean serverValue = documentSnapshot.getBoolean("active");
+                    Log.i("display", "servervalue is: " +serverValue);
+
+                    //test value
+                    if (serverValue == null || serverValue == false) {
+                       groupIsActive[0] = false;
+                    } else {
+                       groupIsActive[0] = true;
+                    }
                 });
 
 
@@ -379,7 +404,8 @@ public class MessageActivity extends AppCompatActivity {
             Log.i("display", "group status is: " +a);
             return a;
         }*/
-        return false;
+        Log.i("display", "returning servervalue : " +groupIsActive[0]);
+        return groupIsActive[0];
     }
 
 
