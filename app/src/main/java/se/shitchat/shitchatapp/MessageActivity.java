@@ -2,7 +2,6 @@ package se.shitchat.shitchatapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,26 +12,19 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
-
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -45,13 +37,14 @@ public class MessageActivity extends AppCompatActivity {
     private ImageButton sendButton;
     private EditText ediMessage;
     private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
     private RecyclerView messageRecycler;
     private ImageView inputIndicator;
     private MessageAdapter adapter;
 
     //from group
     private String groupId = "kemywcCWdHKO5ESZpSZn";
-    String groupName = "Benjamin test grupp";
+    //String groupName = "Benjamin test grupp";
     private boolean image;
     private String imageUrl;
     private boolean active;
@@ -67,12 +60,12 @@ public class MessageActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         groupId = intent.getStringExtra("groupId");
+        /*
         groupName = intent.getStringExtra("groupName");
 
         if (groupName == null) {
             groupName = "inget namn skickas med";
-        }
-
+        }*/
 
         initialization();
 
@@ -86,10 +79,8 @@ public class MessageActivity extends AppCompatActivity {
 
         //send message when enter key is pushed
         ediMessage.setOnKeyListener((v, keyCode, event) -> {
-            if (event.getAction() == KeyEvent.ACTION_DOWN)
-            {
-                switch (keyCode)
-                {
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                switch (keyCode) {
                     case KeyEvent.KEYCODE_DPAD_CENTER:
                     case KeyEvent.KEYCODE_ENTER:
                         sendButtonPressed(v);
@@ -113,13 +104,14 @@ public class MessageActivity extends AppCompatActivity {
         //get group
         // chat = getGroup();
 
+
         //change toolbar to groupname
-        Objects.requireNonNull(getSupportActionBar()).setTitle(groupName);
+        setToolbarName();
 
         db.collection("groups").document(groupId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-               displayTyping();
+                displayTyping();
                 Log.i("display", "onEvent: displayTyping");
             }
         });
@@ -132,60 +124,40 @@ public class MessageActivity extends AppCompatActivity {
 
         final Chat[] group = new Chat[1];
 
-       db.collection("groups")
+        db.collection("groups")
                 .document(groupId).get().addOnCompleteListener(task -> {
-                    DocumentSnapshot document = task.getResult();
+            DocumentSnapshot document = task.getResult();
 
-                    if (document.exists()) {
-                         group[0] = document.toObject(Chat.class);
-                         document.get("userNames");
+            if (document.exists()) {
+                group[0] = document.toObject(Chat.class);
+                document.get("userNames");
 
-                    }
-                });
+            }
+        });
 
         return group[0];
 
     }
 
-    private String getToolbarName() {
-
-
-        DocumentReference group = db.collection("groups").document(groupId);
-
-        group.getClass();
-
-        // Atomically add a new region to the "UserNames" array field.
-        //group.update("userNames", FieldValue.arrayUnion(model.getUsername()));
-
-
-        if (chat == null) { //TODO chat is null
-
-            Log.i("toolbar", "setToolbar: 1");
-            return "Group non existing";
-        }
-        //if name is not default set name
-        else if (!chat.getName().equals("default")) {
-            //if name is default set name to users
-            Log.i("toolbar", "setToolbar: 2");
-            return chat.getName();
-        }
-        else
-            {
-            ArrayList<String> names = chat.getUserNames();
-            String namesFormat = "";
-            //loop all users in grpup and add them to string
-            for (int i = 0; i < names.size(); i++) {
-                FirebaseAuth mAuth = FirebaseAuth.getInstance();
-
-                //excloude yourself
-                if (!names.get(i).equalsIgnoreCase(mAuth.getCurrentUser().getDisplayName())) {
-                    namesFormat = namesFormat + names.get(i) + " ";
-                }
-            }
-
-                Log.i("toolbar", "setToolbar: 3");
-            return namesFormat;
-        }
+    private void setToolbarName() {
+        db.collection("groups")
+                .document(groupId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    DocumentSnapshot document = task.getResult();
+                    if (!document.getString("name").equals("default")) {
+                        Objects.requireNonNull(getSupportActionBar()).setTitle(document.getString("name"));
+                    } else {
+                        ArrayList<String> names = (ArrayList<String>) document.get("userNames");
+                        String groupName = "";
+                        for (int i = 0; i < names.size(); i++) {
+                            if (!names.get(i).equalsIgnoreCase(mAuth.getCurrentUser().getDisplayName())) {
+                                groupName = groupName + names.get(i) + " ";
+                            }
+                        }
+                        Objects.requireNonNull(getSupportActionBar()).setTitle(groupName);
+                    }
+                });
     }
 
     private void setUpRecyclerView() {
@@ -208,7 +180,7 @@ public class MessageActivity extends AppCompatActivity {
         //sets settings for recycler
         messageRecycler.setHasFixedSize(true);
         messageRecycler.setAdapter(adapter);
-        ((LinearLayoutManager)messageRecycler.getLayoutManager()).setStackFromEnd(true);
+        ((LinearLayoutManager) messageRecycler.getLayoutManager()).setStackFromEnd(true);
     }
 
     @Override
@@ -236,6 +208,7 @@ public class MessageActivity extends AppCompatActivity {
 
     private void initialization() {
         db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         //instances firestore
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                 .build();
@@ -268,13 +241,12 @@ public class MessageActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                 Log.i("input", "on");
-                if( s.length() >= 1) {
+                if (s.length() >= 1) {
                     Log.i("input", "true");
                     db.collection("groups").document(groupId).update("active", true);
                     active = true;
                     displayTyping();
-                }
-                else if (s.length() == 0) {
+                } else if (s.length() == 0) {
                     db.collection("groups").document(groupId).update("active", false);
                     active = false;
                     Log.i("input", "false");
@@ -308,7 +280,6 @@ public class MessageActivity extends AppCompatActivity {
         message.setCreationDate();
 
 
-
         //adds image
         if (image) {
             message.setImage(imageUrl);
@@ -330,7 +301,7 @@ public class MessageActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.message_menu,menu);
+        getMenuInflater().inflate(R.menu.message_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -352,33 +323,30 @@ public class MessageActivity extends AppCompatActivity {
     }
 
 
-
     private void displayTyping() {
         if (!active && isChatActive()) {
             inputIndicator.setVisibility(View.VISIBLE);
             Log.i("display", "displayTyping: VISIBLE");
-        }
-        else {
+        } else {
             inputIndicator.setVisibility(View.GONE);
             Log.i("display", "displayTyping: GONE");
         }
     }
 
     private boolean isChatActive() {
-         Boolean a = false;
+        Boolean a = false;
 
-                db.collection("groups").document(groupId).get().addOnCompleteListener(task -> {
+        db.collection("groups").document(groupId).get().addOnCompleteListener(task -> {
 
-                    Log.i("display", "someone is active");
-                    //TODO returns null
-                    // a = task.getResult().getBoolean("active");
-                });
+            Log.i("display", "someone is active");
+            //TODO returns null
+            // a = task.getResult().getBoolean("active");
+        });
 
         if (a == null) {
             Log.i("display", "everything is null");
             return false;
-        }
-        else {
+        } else {
             return a;
         }
     }
