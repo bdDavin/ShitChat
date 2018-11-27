@@ -91,8 +91,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/message_edit"
-        app:srcCompat="@drawable/cameraicon"
-        tools:srcCompat="@drawable/cameraicon" />
+        app:srcCompat="@drawable/image"
+        tools:srcCompat="@drawable/image" />
 
     <ImageView
         android:id="@+id/image_view_active"

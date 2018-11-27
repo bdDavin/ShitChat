@@ -66,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        // recyclerview start updating
         if (adapter != null) {
             adapter.startListening();
         }
@@ -74,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+
+        //stops recyclerview from updating
         if (adapter != null) {
             adapter.stopListening();
         }
@@ -94,12 +98,16 @@ public class MainActivity extends AppCompatActivity {
         chatsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         //Skapar adaptern
         adapter = new FirestoreRecyclerAdapter<Chat, ChatsViewHolder>(options) {
+
             @Override
             protected void onBindViewHolder(@NonNull ChatsViewHolder holder, int position, @NonNull Chat chatModel) {
-                //sätter datan till viewsen
+
+                //sätter datan till namnet
                 if (!chatModel.getName().equals("default")) {
                     holder.chatsUsername.setText(chatModel.getName());
                 } else {
+
+                    //ändrar namn till medlemmarna
                     ArrayList<String> names = chatModel.getUserNames();
                     String namesFormat = "";
                     for (int i = 0; i < names.size(); i++) {
@@ -111,10 +119,12 @@ public class MainActivity extends AppCompatActivity {
                 }
                 String imageUrl = chatModel.getImage();
                 String groupId = getSnapshots().getSnapshot(position).getId();
+
                 //displays image
                 if (imageUrl == null || imageUrl.equals("default")) {
                     ArrayList<String> ids = chatModel.getUserId();
 
+                    //displays user profile if only two members
                     if (ids.size() == 2) {
                         for (int i = 0; i < ids.size(); i++) {
                             if (!ids.get(i).equals(mAuth.getCurrentUser().getUid()))
@@ -122,6 +132,8 @@ public class MainActivity extends AppCompatActivity {
                                         .document(ids.get(i))
                                         .get()
                                         .addOnSuccessListener(documentSnapshot -> {
+
+                                            //get image from firebase
                                             String friendURL = documentSnapshot.getString("image");
                                             if (friendURL == null || friendURL.equals("default")) {
                                                 holder.profileImage.setImageResource(R.drawable.default_profile);

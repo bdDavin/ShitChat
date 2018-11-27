@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +20,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,7 +30,6 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -46,6 +45,7 @@ public class MessageActivity extends AppCompatActivity {
     private RecyclerView messageRecycler;
     private ImageView inputIndicator;
     private MessageAdapter adapter;
+    private String imageURL;
 
     //from group
     private String groupId = "kemywcCWdHKO5ESZpSZn";
@@ -114,9 +114,7 @@ public class MessageActivity extends AppCompatActivity {
         db.collection("groups").document(groupId).addSnapshotListener((documentSnapshot, e) -> {
 
             Log.i("display", "Document has been updated");
-            //recieves value
-
-
+            //recieves value from fire store
             Boolean serverValue = documentSnapshot.getBoolean("active");
             Log.i("display", "servervalue is: " +serverValue);
 
@@ -127,6 +125,7 @@ public class MessageActivity extends AppCompatActivity {
                 groupIsActive = true;
             }
 
+            //displays indicator
             displayTyping();
         });
 
@@ -134,21 +133,29 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     private void setToolbarName() {
+
+        //get group
         db.collection("groups")
                 .document(groupId)
                 .get()
                 .addOnCompleteListener(task -> {
                     DocumentSnapshot document = task.getResult();
+
+                    //test for groupname
                     if (!document.getString("name").equals("default")) {
                         Objects.requireNonNull(getSupportActionBar()).setTitle(document.getString("name"));
-                    } else {
+                    }
+                    else {
+                        //sets name to members
                         ArrayList<String> names = (ArrayList<String>) document.get("userNames");
                         String groupName = "";
                         for (int i = 0; i < names.size(); i++) {
+                            //exclude your username
                             if (!names.get(i).equalsIgnoreCase(mAuth.getCurrentUser().getDisplayName())) {
                                 groupName = groupName + names.get(i) + " ";
                             }
                         }
+                        //sets name to toolbar
                         Objects.requireNonNull(getSupportActionBar()).setTitle(groupName);
                     }
                 });
@@ -287,20 +294,14 @@ public class MessageActivity extends AppCompatActivity {
 
     private void openGallery() {
         //open gallery
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        //startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
-
-
         Intent i = new Intent(
                 Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
-        startActivityForResult(i, REQUEST_IMAGE_GALLERY);
+         startActivityForResult(i, REQUEST_IMAGE_GALLERY);
     }
 
-    private String imageURL;
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @android.support.annotation.Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -326,6 +327,7 @@ public class MessageActivity extends AppCompatActivity {
                             //sends image
                             if (imageURL != null) {
                                 sendButtonPressed(findViewById(android.R.id.content));
+                                showImageSnack();
                             }
                         });
             });
@@ -364,6 +366,7 @@ public class MessageActivity extends AppCompatActivity {
         String input = getInput();
         ediMessage.setText("");
 
+        //disables sending empty messages
         if (input.length() <= 0 && imageURL == "default") {
             return;
         }
@@ -424,5 +427,12 @@ public class MessageActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         this.finish();
+    }
+
+    //En snackbar som vissar vem som är inloggad
+    private void showImageSnack() {
+        Snackbar.make(ediMessage, getString(R.string.image_sent) ,
+                Snackbar.LENGTH_SHORT)
+                .show();
     }
 }

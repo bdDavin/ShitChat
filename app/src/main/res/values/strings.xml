@@ -10,4 +10,5 @@
     <string name="searchImage">Search Image</string>
     <string name="username">Username</string>
     <string name="log_in_failed">Log in failed, try again later</string>
+    <string name="image_sent">image sent</string>
 </resources>
