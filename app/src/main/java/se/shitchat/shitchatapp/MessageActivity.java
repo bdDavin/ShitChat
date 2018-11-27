@@ -314,7 +314,7 @@ public class MessageActivity extends AppCompatActivity {
 
             //upload image to firestore
             StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-            StorageReference imagesRef = storageRef.child("images/messages/"+imageUri.getLastPathSegment());
+            StorageReference imagesRef = storageRef.child("images/messages/"+groupId +"/"+imageUri.getLastPathSegment());
             UploadTask uploadTask = imagesRef.putFile(imageUri);
 
             // Register observers to listen for when the download is done or if it fails
