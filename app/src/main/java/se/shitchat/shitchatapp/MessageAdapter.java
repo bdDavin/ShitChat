@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
@@ -39,10 +40,8 @@ class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerView.View
 
 
         //displays imageview if picture is sent
-        if (model.getImage() != null) {
-            hold.pictureView.setImageResource(R.drawable.default_profile);
-            //TODO load image from url = model.getImage()
-            //hold.pictureView.setImageResource(model.getImage());
+        if (model.getImage() != null && model.getImage() != "default") {
+            Picasso.get().load(model.getImage()).into(hold.pictureView);
 
             if (hold.pictureView.getDrawable() != null);
             hold.pictureView.setVisibility(View.VISIBLE);

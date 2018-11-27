@@ -1,7 +1,9 @@
 package se.shitchat.shitchatapp;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,6 +33,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 
@@ -59,6 +64,7 @@ public class MessageActivity extends AppCompatActivity {
     private boolean ImActive;
     private Chat chat;
     private boolean addToChat = false;
+    private Boolean groupIsActive = false;
 
 
 
@@ -85,14 +91,6 @@ public class MessageActivity extends AppCompatActivity {
                 //.asGif()
                 .load(getDrawable(R.drawable.typing))
                 .into(inputIndicator);
-
-       // GifDrawable() a = new GifDrawable(I)
-
-
-
-        //GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(inputIndicator);
-        //Glide.with(this).load(getDrawable(R.drawable.typing)).into(imageViewTarget);
-
 
 
         //sendbutton
@@ -138,6 +136,19 @@ public class MessageActivity extends AppCompatActivity {
         db.collection("groups").document(groupId).addSnapshotListener((documentSnapshot, e) -> {
 
             Log.i("display", "Document has been updated");
+            //recieves value
+
+
+            Boolean serverValue = documentSnapshot.getBoolean("active");
+            Log.i("display", "servervalue is: " +serverValue);
+
+            //test value
+            if (serverValue == null || serverValue == false) {
+                groupIsActive = false;
+            } else {
+                groupIsActive = true;
+            }
+
             displayTyping();
         });
 
@@ -264,7 +275,11 @@ public class MessageActivity extends AppCompatActivity {
         textChanging();
 
 
+
+
     }
+
+
 
 
 
@@ -293,13 +308,16 @@ public class MessageActivity extends AppCompatActivity {
 
                 Log.i("display", "My text field has changed");
                 if( count >= 1) {
-                    Log.i("display", "I started to write");
-                    db.collection("groups").document(groupId).update("active", true).addOnCompleteListener(task -> ImActive = true);
+                    Log.i("display", "I am active");
+                    ImActive = true;
+                    db.collection("groups").document(groupId).update("active", true);
+
 
                 }
                 else if (count == 0) {
-                    Log.i("display", "I have stopped writing");
-                    db.collection("groups").document(groupId).update("active", false).addOnCompleteListener(task -> ImActive = false);
+                    Log.i("display", "I am inactive");
+                    ImActive = false;
+                    db.collection("groups").document(groupId).update("active", false);
 
                 }
 
@@ -309,14 +327,14 @@ public class MessageActivity extends AppCompatActivity {
 
 
     private void displayTyping() {
-        if (!ImActive && isChatActive()) {
+        Log.i("display", "displayTyping: im: " +ImActive +" group is: " +groupIsActive);
+        if (!ImActive && groupIsActive) {
             Log.i("display", "buble is VISIBLE");
             inputIndicator.setVisibility(View.VISIBLE);
 
         }
         else {
             Log.i("display", "buble is GONE");
-            //TODO change to invisible
             inputIndicator.setVisibility(View.GONE);
 
         }
@@ -328,25 +346,6 @@ public class MessageActivity extends AppCompatActivity {
         //standard value
 
         final Boolean[] groupIsActive = new Boolean[1];
-        groupIsActive[0] = true;
-        //DocumentSnapshot document = db.collection("groups").document(groupId).;
-
-        //document.getString("username");
-        //download active field from firebase
-
-
-       /* db.collection("groups")
-       .document(groupId)
-       .get()
-       .addOnCompleteListener(task -> {
-                    Log.i("display", "someone is Active");
-
-                    //TODO returns null
-                    DocumentSnapshot t = task.getResult();
-
-            Log.i("display", "chat is: " +t.get("active"));
-
-                });*/
 
 
         db.collection("groups")
@@ -368,50 +367,62 @@ public class MessageActivity extends AppCompatActivity {
 
 
 
-
-
-           /* DocumentReference codesRef = db.collection("groups").document(groupId);
-            codesRef.get().addOnCompleteListener(task1 -> {
-                if (task1.isSuccessful()) {
-                    List<String> list = new ArrayList<>();
-
-                    Map<String, Object> map = task1.getResult().getData();
-
-                    map.values();
-                    Object mp = map.get("active");
-                    Log.i("group", "isChatActive: " + mp);
-
-
-                    /*for (Map.Entry<String, Object> entry : map.entrySet()) {
-                        list.add(entry.getKey());
-                        Log.d("Group info", entry.getKey());
-                    }
-                    //Do what you want to do with your list
-                }
-            });
-
-            a = t.getBoolean("active");
-
-
-
-        });*/
-
-        /*if (a == null) {
-            Log.i("display", "Could not pull data from acitve field in group");
-            return false;
-        }
-        else {
-            Log.i("display", "group status is: " +a);
-            return a;
-        }*/
         Log.i("display", "returning servervalue : " +groupIsActive[0]);
-        return groupIsActive[0];
+
+                return groupIsActive[0];
+
     }
 
+    /************************** Sending picture ************/
 
+    static final int REQUEST_IMAGE_GALLERY = 1337;
 
+    private void openGallery() {
+        //open gallery
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
+    }
 
+    static private String imageURL;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @android.support.annotation.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        //if coming back from gallery or camera load image to message
+        if ((requestCode == REQUEST_IMAGE_GALLERY //|| requestCode == REQUEST_IMAGE_CAPTURE)
+        )&& resultCode == RESULT_OK && data != null && data.getData() != null){
+
+            //get image
+            Uri imageUri = data.getData();
+
+            //upload image to firestore
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference();;
+            StorageReference imagesRef = storageRef.child("images/messages/"+imageUri.getLastPathSegment());
+            UploadTask uploadTask = imagesRef.putFile(imageUri);
+
+            // Register observers to listen for when the download is done or if it fails
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                imagesRef.getDownloadUrl()
+                        .addOnCompleteListener(task -> {
+                            //saves download link
+                            imageURL = task.getResult().toString();
+                        });
+            });
+        }
+    }
+
+    /******************* cammera ***************************/
+
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
 
 
     /********************** Buttons ***********************/
@@ -439,12 +450,10 @@ public class MessageActivity extends AppCompatActivity {
         message.setName(name);
         message.setCreationDate();
 
-
-
         //adds image
-        if (image) {
-            message.setImage(imageUrl);
-        }
+        message.setImage(imageURL);
+        imageURL = "default";
+
 
         //sends message to database
         db.collection("groups").document(groupId)
@@ -479,14 +488,14 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     public void addImagePressed(View view) {
-        image = !image;
-        imageUrl = "R.drawable.default_profile";
+        openGallery();
+        //imageUrl = "R.drawable.default_profile";
     }
 
     //Handles back button
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        this.finish();
+        //this.finish();
     }
 }
