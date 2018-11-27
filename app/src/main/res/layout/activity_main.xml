@@ -19,16 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <SearchView
-        android:id="@+id/searchView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:alpha="1"
-        android:background="@color/common_google_signin_btn_text_dark_disabled"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mainToolbar" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/chatsRecyclerView"
@@ -39,8 +29,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchView"
-        tools:listitem="@layout/layout_chats" >
+        app:layout_constraintTop_toBottomOf="@+id/mainToolbar"
+        tools:listitem="@layout/layout_chats">
 
     </android.support.v7.widget.RecyclerView>
 

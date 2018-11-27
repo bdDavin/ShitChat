@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,15 +21,10 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
@@ -38,13 +32,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
-
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
-import javax.annotation.Nullable;
 
 
 public class MessageActivity extends AppCompatActivity {
@@ -52,13 +42,13 @@ public class MessageActivity extends AppCompatActivity {
     private ImageButton sendButton;
     private EditText ediMessage;
     private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
     private RecyclerView messageRecycler;
     private ImageView inputIndicator;
     private MessageAdapter adapter;
 
     //from group
     private String groupId = "kemywcCWdHKO5ESZpSZn";
-    String groupName = "Benjamin test grupp";
     private boolean ImActive;
     private boolean addToChat = false;
     private Boolean groupIsActive = false;
@@ -73,20 +63,13 @@ public class MessageActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         groupId = intent.getStringExtra("groupId");
-        groupName = intent.getStringExtra("groupName");
-
-        if (groupName == null) {
-            groupName = "inget namn skickas med";
-        }
-
 
         initialization();
 
 
         //loads input indicator with glide
         Glide.with(this)
-                //.asGif()
-                .load(getDrawable(R.drawable.typing))
+                .load(getDrawable(R.drawable.typingicon))
                 .into(inputIndicator);
 
 
@@ -125,7 +108,7 @@ public class MessageActivity extends AppCompatActivity {
 
 
         //change toolbar to groupname
-        Objects.requireNonNull(getSupportActionBar()).setTitle(groupName);
+        setToolbarName();
 
         //test for document change
         db.collection("groups").document(groupId).addSnapshotListener((documentSnapshot, e) -> {
@@ -150,6 +133,27 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
+    private void setToolbarName() {
+        db.collection("groups")
+                .document(groupId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    DocumentSnapshot document = task.getResult();
+                    if (!document.getString("name").equals("default")) {
+                        Objects.requireNonNull(getSupportActionBar()).setTitle(document.getString("name"));
+                    } else {
+                        ArrayList<String> names = (ArrayList<String>) document.get("userNames");
+                        String groupName = "";
+                        for (int i = 0; i < names.size(); i++) {
+                            if (!names.get(i).equalsIgnoreCase(mAuth.getCurrentUser().getDisplayName())) {
+                                groupName = groupName + names.get(i) + " ";
+                            }
+                        }
+                        Objects.requireNonNull(getSupportActionBar()).setTitle(groupName);
+                    }
+                });
+    }
+
 
     private void setUpRecyclerView() {
 
@@ -171,7 +175,7 @@ public class MessageActivity extends AppCompatActivity {
         //sets settings for recycler
         messageRecycler.setHasFixedSize(true);
         messageRecycler.setAdapter(adapter);
-        ((LinearLayoutManager)messageRecycler.getLayoutManager()).setStackFromEnd(true);
+        ((LinearLayoutManager) messageRecycler.getLayoutManager()).setStackFromEnd(true);
     }
 
     @Override
@@ -199,6 +203,7 @@ public class MessageActivity extends AppCompatActivity {
 
     private void initialization() {
         db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         //instances firestore
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                 .build();
@@ -378,7 +383,7 @@ public class MessageActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.message_menu,menu);
+        getMenuInflater().inflate(R.menu.message_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -406,6 +411,6 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        //this.finish();
+        this.finish();
     }
 }
