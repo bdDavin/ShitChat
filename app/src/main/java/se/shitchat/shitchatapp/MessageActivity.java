@@ -59,10 +59,7 @@ public class MessageActivity extends AppCompatActivity {
     //from group
     private String groupId = "kemywcCWdHKO5ESZpSZn";
     String groupName = "Benjamin test grupp";
-    private boolean image;
-    private String imageUrl;
     private boolean ImActive;
-    private Chat chat;
     private boolean addToChat = false;
     private Boolean groupIsActive = false;
 
@@ -126,8 +123,6 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-        //get group
-        // chat = getGroup();
 
         //change toolbar to groupname
         Objects.requireNonNull(getSupportActionBar()).setTitle(groupName);
@@ -155,66 +150,6 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
-    private Chat getGroup() {
-        //frågar databasen efter det senaste meddelandet i gruppen och sätter det i vyn
-
-        final Chat[] group = new Chat[1];
-
-       db.collection("groups")
-                .document(groupId).get().addOnCompleteListener(task -> {
-                    DocumentSnapshot document = task.getResult();
-
-                    if (document.exists()) {
-                         group[0] = document.toObject(Chat.class);
-                         document.get("userNames");
-
-                    }
-                });
-
-        return group[0];
-
-    }
-
-    private String getToolbarName() {
-
-
-        DocumentReference group = db.collection("groups").document(groupId);
-
-        group.getClass();
-
-        // Atomically add a new region to the "UserNames" array field.
-        //group.update("userNames", FieldValue.arrayUnion(model.getUsername()));
-
-
-        if (chat == null) { //TODO chat is null
-
-            Log.i("toolbar", "setToolbar: 1");
-            return "Group non existing";
-        }
-        //if name is not default set name
-        else if (!chat.getName().equals("default")) {
-            //if name is default set name to users
-            Log.i("toolbar", "setToolbar: 2");
-            return chat.getName();
-        }
-        else
-            {
-            ArrayList<String> names = chat.getUserNames();
-            String namesFormat = "";
-            //loop all users in grpup and add them to string
-            for (int i = 0; i < names.size(); i++) {
-                FirebaseAuth mAuth = FirebaseAuth.getInstance();
-
-                //excloude yourself
-                if (!names.get(i).equalsIgnoreCase(mAuth.getCurrentUser().getDisplayName())) {
-                    namesFormat = namesFormat + names.get(i) + " ";
-                }
-            }
-
-                Log.i("toolbar", "setToolbar: 3");
-            return namesFormat;
-        }
-    }
 
     private void setUpRecyclerView() {
 
@@ -341,40 +276,8 @@ public class MessageActivity extends AppCompatActivity {
     }
 
 
-    //returns true if someone is writing
-    private boolean isChatActive() {
-        //standard value
-
-        final Boolean[] groupIsActive = new Boolean[1];
-
-
-        db.collection("groups")
-                .document(groupId)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-
-                    //recieves value
-                    Boolean serverValue = documentSnapshot.getBoolean("active");
-                    Log.i("display", "servervalue is: " +serverValue);
-
-                    //test value
-                    if (serverValue == null || serverValue == false) {
-                       groupIsActive[0] = false;
-                    } else {
-                       groupIsActive[0] = true;
-                    }
-                });
-
-
-
-        Log.i("display", "returning servervalue : " +groupIsActive[0]);
-
-                return groupIsActive[0];
-
-    }
-
-    /************************** Sending picture ************/
-
+    /************************** Sending picture  ************/
+    /* TODO IN PROGRESS */
     static final int REQUEST_IMAGE_GALLERY = 1337;
 
     private void openGallery() {
@@ -413,8 +316,10 @@ public class MessageActivity extends AppCompatActivity {
         }
     }
 
-    /******************* cammera ***************************/
 
+
+    /******************* cammera ***************************/
+    /* TODO IN PROGRESS */
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private void dispatchTakePictureIntent() {
@@ -423,6 +328,8 @@ public class MessageActivity extends AppCompatActivity {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
+
+
 
 
     /********************** Buttons ***********************/
@@ -489,7 +396,10 @@ public class MessageActivity extends AppCompatActivity {
 
     public void addImagePressed(View view) {
         openGallery();
-        //imageUrl = "R.drawable.default_profile";
+    }
+
+    public void cameraButtonPressed(View view) {
+        dispatchTakePictureIntent();
     }
 
     //Handles back button

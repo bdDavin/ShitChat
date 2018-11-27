@@ -23,9 +23,6 @@ class MessageHolder extends RecyclerView.ViewHolder {
         pictureView = itemView.findViewById(R.id.imageView);
         senderView = itemView.findViewById(R.id.text_view_sender);
 
-        //TODO show buble on active
-        //Glide.with(context).load(GIF_URI).into(new GlideDrawableImageViewTarget(IMAGE_VIEW));
-
     }
 
 
