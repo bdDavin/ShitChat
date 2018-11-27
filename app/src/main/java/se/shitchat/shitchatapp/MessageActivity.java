@@ -191,7 +191,7 @@ public class MessageActivity extends AppCompatActivity {
         //stop updating from db
         adapter.stopListening();
         ImActive = false;
-        finish();
+        //finish();
     }
 
     @Override
@@ -290,23 +290,29 @@ public class MessageActivity extends AppCompatActivity {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
+        //startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
+
+
+        Intent i = new Intent(
+                Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        startActivityForResult(i, REQUEST_IMAGE_GALLERY);
     }
 
-    static private String imageURL;
+    private String imageURL;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @android.support.annotation.Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         //if coming back from gallery or camera load image to message
-        if ((requestCode == REQUEST_IMAGE_GALLERY //|| requestCode == REQUEST_IMAGE_CAPTURE)
-        )&& resultCode == RESULT_OK && data != null && data.getData() != null){
+        if ((requestCode == REQUEST_IMAGE_GALLERY) && resultCode == RESULT_OK && data != null && data.getData() != null){
 
             //get image
             Uri imageUri = data.getData();
 
             //upload image to firestore
-            StorageReference storageRef = FirebaseStorage.getInstance().getReference();;
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
             StorageReference imagesRef = storageRef.child("images/messages/"+imageUri.getLastPathSegment());
             UploadTask uploadTask = imagesRef.putFile(imageUri);
 
@@ -316,10 +322,16 @@ public class MessageActivity extends AppCompatActivity {
                         .addOnCompleteListener(task -> {
                             //saves download link
                             imageURL = task.getResult().toString();
+
+                            //sends image
+                            if (imageURL != null) {
+                                sendButtonPressed(findViewById(android.R.id.content));
+                            }
                         });
             });
         }
     }
+
 
 
 
@@ -352,7 +364,7 @@ public class MessageActivity extends AppCompatActivity {
         String input = getInput();
         ediMessage.setText("");
 
-        if (input.length() <= 0) {
+        if (input.length() <= 0 && imageURL == "default") {
             return;
         }
         //creates message

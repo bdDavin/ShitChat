@@ -45,9 +45,11 @@ class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerView.View
 
             if (hold.pictureView.getDrawable() != null);
             hold.pictureView.setVisibility(View.VISIBLE);
+            hold.messageView.setVisibility(View.GONE);
         }
         else {
             hold.pictureView.setVisibility(View.GONE);
+            hold.messageView.setVisibility(View.VISIBLE);
         }
 
     }
