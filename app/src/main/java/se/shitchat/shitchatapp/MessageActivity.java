@@ -60,12 +60,6 @@ public class MessageActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         groupId = intent.getStringExtra("groupId");
-        /*
-        groupName = intent.getStringExtra("groupName");
-
-        if (groupName == null) {
-            groupName = "inget namn skickas med";
-        }*/
 
         initialization();
 

@@ -18,12 +18,15 @@
         </activity>
         <activity android:name=".MessageActivity"
             android:parentActivityName=".MainActivity"/>
+            <intent-filter>
+                <action android:name="NewMessages" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         <activity android:name=".ProfileActivity"
             android:parentActivityName=".MainActivity"/>
         <activity android:name=".SearchActivity"
             android:parentActivityName=".MainActivity"/>
-
-        <service android:name=".NotificationReceiver" />
     </application>
 
 </manifest>
