@@ -9,6 +9,12 @@
             app:showAsAction="always"
             android:onClick="searchUsers"/>
 
+        <item
+            android:id="@+id/settings"
+            android:title="@string/settings"
+            app:showAsAction="never"
+            android:onClick="settings"/>
+
 
 
 </menu>

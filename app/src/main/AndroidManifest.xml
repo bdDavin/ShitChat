@@ -16,17 +16,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MessageActivity"
-            android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".MessageActivity"
+            android:parentActivityName=".MainActivity">
             <intent-filter>
                 <action android:name="NewMessages" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        <activity android:name=".ProfileActivity"
-            android:parentActivityName=".MainActivity"/>
-        <activity android:name=".SearchActivity"
-            android:parentActivityName=".MainActivity"/>
+        </activity>
+        <activity
+            android:name=".ProfileActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".SearchActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".GroupProfileActivity"></activity>
     </application>
 
 </manifest>

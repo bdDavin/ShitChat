@@ -311,11 +311,16 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
+    public void settings(MenuItem item) {
+        Intent i = new Intent(getApplicationContext(), GroupProfileActivity.class);
+        i.putExtra("groupId", groupId);
+        startActivity(i);
+    }
+
     public void addImagePressed(View view) {
         image = !image;
         imageUrl = "R.drawable.default_profile";
     }
-
 
     private void displayTyping() {
         if (!active && isChatActive()) {
