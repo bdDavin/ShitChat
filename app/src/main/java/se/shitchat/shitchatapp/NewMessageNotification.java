@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
@@ -63,7 +62,7 @@ public class NewMessageNotification {
                 .setDefaults(Notification.DEFAULT_ALL)
 
                 // Beskrivning + en mindre icon
-                .setSmallIcon(R.drawable.ic_stat_new_message)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setChannelId("notify01")
@@ -99,8 +98,7 @@ public class NewMessageNotification {
                 // later.
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(message)
-                        .setBigContentTitle(title)
-                        .setSummaryText("Dummy summary text"))
+                        .setBigContentTitle(title))
 
                 // Automatically dismiss the notification when it is touched.
                 .setAutoCancel(true);

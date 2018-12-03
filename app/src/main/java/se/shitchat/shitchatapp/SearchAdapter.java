@@ -1,13 +1,12 @@
 package se.shitchat.shitchatapp;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -16,12 +15,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+import com.squareup.picasso.Picasso;
 
 public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.SearchHolder> {
 
@@ -39,6 +35,13 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
     protected void onBindViewHolder(@NonNull SearchHolder holder, int position, @NonNull User model) {
 
         holder.username.setText(model.getUsername());
+
+        String userUrl = model.getImage();
+        if (userUrl == null || userUrl.equals("default")) {
+            holder.userImage.setImageResource(R.drawable.default_profile);
+        } else {
+            Picasso.get().load(userUrl).into(holder.userImage);
+        }
 
         chooseUser(holder, position, model);
 
@@ -118,11 +121,13 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
 
         TextView username;
         View userParent;
+        ImageView userImage;
 
         public SearchHolder(@NonNull View itemView) {
             super(itemView);
             username = itemView.findViewById(R.id.userUsername);
             userParent = itemView.findViewById(R.id.user_parent);
+            userImage = itemView.findViewById(R.id.userProfileImage);
         }
 
     }
