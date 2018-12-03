@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="se.shitchat.shitchatapp">
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <uses-feature android:name="android.hardware.camera"
         android:required="true" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -20,12 +22,28 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MessageActivity"
-            android:parentActivityName=".MainActivity"/>
-        <activity android:name=".ProfileActivity"
-            android:parentActivityName=".MainActivity"/>
-        <activity android:name=".SearchActivity"
-            android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".MessageActivity"
+            android:parentActivityName=".MainActivity">
+            <intent-filter>
+                <action android:name="NewMessages" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ProfileActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".SearchActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".GroupProfileActivity" />
+
+        <service android:name=".MessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

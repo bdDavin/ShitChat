@@ -4,8 +4,12 @@
     android:id="@+id/user_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/browser_actions_bg_grey"
-    android:orientation="horizontal">
+    android:background="@drawable/item_border"
+    android:orientation="horizontal"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_image"
@@ -20,7 +24,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:background="@color/browser_actions_bg_grey"
         android:orientation="vertical"
         android:padding="4dp">
 

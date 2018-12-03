@@ -4,10 +4,16 @@
 
         <item
             android:id="@+id/action_add"
-            android:icon="@android:drawable/ic_menu_add"
+            android:icon="@drawable/ic_add_black_24dp"
+            android:onClick="searchUsers"
             android:title="@string/profile"
-            app:showAsAction="always"
-            android:onClick="searchUsers"/>
+            app:showAsAction="always" />
+
+        <item
+            android:id="@+id/settings"
+            android:title="@string/settings"
+            app:showAsAction="never"
+            android:onClick="settings"/>
 
 
 

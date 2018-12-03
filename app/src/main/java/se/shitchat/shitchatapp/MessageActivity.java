@@ -22,10 +22,17 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
@@ -35,6 +42,7 @@ import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import javax.annotation.Nullable;
 
 
 public class MessageActivity extends AppCompatActivity {
@@ -42,7 +50,6 @@ public class MessageActivity extends AppCompatActivity {
     private ImageButton sendButton;
     private EditText ediMessage;
     private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
     private RecyclerView messageRecycler;
     private ImageView inputIndicator;
     private MessageAdapter adapter;
@@ -64,6 +71,12 @@ public class MessageActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         groupId = intent.getStringExtra("groupId");
+        groupName = intent.getStringExtra("groupName");
+
+        if (groupName == null) {
+            groupName = "inget namn skickas med";
+        }
+
 
         initialization();
 
@@ -106,6 +119,7 @@ public class MessageActivity extends AppCompatActivity {
                 messageRecycler.getLayoutManager().smoothScrollToPosition(messageRecycler, null, adapter.getItemCount());
             }
         });
+
 
 
         //change toolbar to groupname
@@ -420,6 +434,8 @@ public class MessageActivity extends AppCompatActivity {
         message.setName(name);
         message.setCreationDate();
 
+
+
         //adds image
         message.setImage(imageURL);
         imageURL = "default";
@@ -455,6 +471,12 @@ public class MessageActivity extends AppCompatActivity {
         startActivity(i);
 
 
+    }
+
+    public void settings(MenuItem item) {
+        Intent i = new Intent(getApplicationContext(), GroupProfileActivity.class);
+        i.putExtra("groupId", groupId);
+        startActivity(i);
     }
 
     public void addImagePressed(View view) {

@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -260,7 +261,11 @@ public class MainActivity extends AppCompatActivity {
                         .document(userUid)
                         .set(user);
 
-                showSignedInSnack();
+                FirebaseInstanceId.getInstance().getInstanceId()
+                        .addOnSuccessListener(instanceIdResult -> db.collection("users")
+                                .document(mAuth.getCurrentUser().getUid())
+                                .update("deviceToken", instanceIdResult.getToken())
+                                .addOnSuccessListener(aVoid -> showSignedInSnack()));
             } else {
                 showLoginFailedSnack();
             }
