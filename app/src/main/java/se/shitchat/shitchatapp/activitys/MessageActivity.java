@@ -1,4 +1,4 @@
-package se.shitchat.shitchatapp;
+package se.shitchat.shitchatapp.activitys;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -22,17 +22,10 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
@@ -42,7 +35,9 @@ import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import javax.annotation.Nullable;
+import se.shitchat.shitchatapp.Message;
+import se.shitchat.shitchatapp.R;
+import se.shitchat.shitchatapp.adapters.MessageAdapter;
 
 
 public class MessageActivity extends AppCompatActivity {
@@ -60,6 +55,8 @@ public class MessageActivity extends AppCompatActivity {
     private boolean ImActive;
     private boolean addToChat = false;
     private Boolean groupIsActive = false;
+    private String groupName;
+    private FirebaseAuth mAuth;
 
 
 
@@ -134,11 +131,7 @@ public class MessageActivity extends AppCompatActivity {
             Log.i("display", "servervalue is: " +serverValue);
 
             //test value
-            if (serverValue == null || serverValue == false) {
-                groupIsActive = false;
-            } else {
-                groupIsActive = true;
-            }
+            groupIsActive = serverValue != null && serverValue != false;
 
             //displays indicator
             displayTyping();

@@ -1,4 +1,4 @@
-package se.shitchat.shitchatapp;
+package se.shitchat.shitchatapp.activitys;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,6 +32,15 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import se.shitchat.shitchatapp.Chat;
+import se.shitchat.shitchatapp.R;
+import se.shitchat.shitchatapp.SwipeToDeleteCallback;
+import se.shitchat.shitchatapp.User;
+import se.shitchat.shitchatapp.activitys.MessageActivity;
+import se.shitchat.shitchatapp.activitys.ProfileActivity;
+import se.shitchat.shitchatapp.activitys.SearchActivity;
+import se.shitchat.shitchatapp.holders.ChatsViewHolder;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -307,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
         createLogInScreen();
     }
 
-    private class ChatsViewHolder extends RecyclerView.ViewHolder {
+    /*private class ChatsViewHolder extends RecyclerView.ViewHolder {
         private TextView chatsUsername;
         private TextView lastMessage;
         private ImageView profileImage;
@@ -323,5 +332,5 @@ public class MainActivity extends AppCompatActivity {
             chatsParent = itemView.findViewById(R.id.chats_parent);
             date = itemView.findViewById(R.id.chats_date);
         }
-    }
+    }*/
 }

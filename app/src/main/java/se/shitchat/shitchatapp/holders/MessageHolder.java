@@ -1,4 +1,4 @@
-package se.shitchat.shitchatapp;
+package se.shitchat.shitchatapp.holders;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -6,7 +6,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-class MessageHolder extends RecyclerView.ViewHolder {
+import se.shitchat.shitchatapp.R;
+
+public class MessageHolder extends RecyclerView.ViewHolder {
 
     //Fields
     public TextView dateView;

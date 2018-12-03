@@ -1,4 +1,4 @@
-package se.shitchat.shitchatapp;
+package se.shitchat.shitchatapp.activitys;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -22,6 +22,8 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
+import se.shitchat.shitchatapp.R;
 
 public class GroupProfileActivity extends AppCompatActivity {
 

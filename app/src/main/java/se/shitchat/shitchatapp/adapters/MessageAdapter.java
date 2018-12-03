@@ -1,25 +1,24 @@
-package se.shitchat.shitchatapp;
+package se.shitchat.shitchatapp.adapters;
 
-import android.app.Dialog;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
-import java.util.Objects;
+import se.shitchat.shitchatapp.Message;
+import se.shitchat.shitchatapp.holders.MessageHolder;
+import se.shitchat.shitchatapp.R;
 
 
-class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder> {
+public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder> {
 
     private static final int VIEW_TYPE_ME = 1;
     private static final int VIEW_TYPE_OTHER = 2;

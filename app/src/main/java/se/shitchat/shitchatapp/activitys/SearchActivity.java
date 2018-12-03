@@ -1,4 +1,4 @@
-package se.shitchat.shitchatapp;
+package se.shitchat.shitchatapp.activitys;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +13,10 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+
+import se.shitchat.shitchatapp.R;
+import se.shitchat.shitchatapp.User;
+import se.shitchat.shitchatapp.adapters.SearchAdapter;
 
 public class SearchActivity extends AppCompatActivity {
 

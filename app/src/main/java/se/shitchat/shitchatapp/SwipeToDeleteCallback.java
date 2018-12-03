@@ -13,7 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
-abstract class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback{
+public abstract class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback{
     private final Drawable deleteIcon;
     private final int intrinsicWidth;
     private final int intrinsicHeight;

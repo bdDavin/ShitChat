@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 
-class Message {
+public class Message {
 
 
 
