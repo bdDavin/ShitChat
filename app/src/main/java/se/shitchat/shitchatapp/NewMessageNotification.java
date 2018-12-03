@@ -63,7 +63,7 @@ public class NewMessageNotification {
                 .setDefaults(Notification.DEFAULT_ALL)
 
                 // Beskrivning + en mindre icon
-                .setSmallIcon(R.drawable.ic_stat_new_message)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setChannelId("notify01")

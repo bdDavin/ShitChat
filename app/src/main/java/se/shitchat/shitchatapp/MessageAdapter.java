@@ -1,16 +1,20 @@
 package se.shitchat.shitchatapp;
 
+import android.app.Dialog;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
@@ -39,18 +43,27 @@ class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerView.View
 
 
         //displays imageview if picture is sent
-        if (model.getImage() != null) {
-            hold.pictureView.setImageResource(R.drawable.default_profile);
-            //TODO load image from url = model.getImage()
-            //hold.pictureView.setImageResource(model.getImage());
+        if (model.getImage() != null && model.getImage() != "default") {
+            Picasso.get().load(model.getImage()).into(hold.pictureView);
 
             if (hold.pictureView.getDrawable() != null);
             hold.pictureView.setVisibility(View.VISIBLE);
+            hold.messageView.setVisibility(View.GONE);
         }
         else {
             hold.pictureView.setVisibility(View.GONE);
+            hold.messageView.setVisibility(View.VISIBLE);
         }
 
+        hold.pictureView.setOnClickListener(v -> viewImage(v));
+
+    }
+
+    private void viewImage(View v) {
+        //TODO fullscreen image
+        ImageView i = (ImageView) (v);
+
+        Log.i("image", "viewImage: " +i.getDrawable());
     }
 
     @NonNull
