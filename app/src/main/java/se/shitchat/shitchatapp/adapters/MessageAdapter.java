@@ -13,7 +13,9 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
-import se.shitchat.shitchatapp.Message;
+import java.util.Objects;
+
+import se.shitchat.shitchatapp.classes.Message;
 import se.shitchat.shitchatapp.holders.MessageHolder;
 import se.shitchat.shitchatapp.R;
 
@@ -32,7 +34,7 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
 
 
     @Override
-    protected void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, Message model) {
+    protected void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull Message model) {
 
         //displays information
             MessageHolder hold = (MessageHolder) holder;
@@ -42,10 +44,10 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
 
 
         //displays imageview if picture is sent
-        if (model.getImage() != null && model.getImage() != "default") {
+        if (model.getImage() != null && !Objects.equals(model.getImage(), "default")) {
             Picasso.get().load(model.getImage()).into(hold.pictureView);
 
-            if (hold.pictureView.getDrawable() != null);
+            if (hold.pictureView.getDrawable() != null)
             hold.pictureView.setVisibility(View.VISIBLE);
             hold.messageView.setVisibility(View.GONE);
         }
@@ -54,7 +56,7 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
             hold.messageView.setVisibility(View.VISIBLE);
         }
 
-        hold.pictureView.setOnClickListener(v -> viewImage(v));
+        hold.pictureView.setOnClickListener(this::viewImage);
 
     }
 
@@ -95,7 +97,7 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
     @Override
     public int getItemViewType(int position) {
         if (this.getItem(position).getUid().equals(
-                FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
             return VIEW_TYPE_ME;
         } else {
             return VIEW_TYPE_OTHER;

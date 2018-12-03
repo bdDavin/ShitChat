@@ -1,10 +1,11 @@
-package se.shitchat.shitchatapp;
+package se.shitchat.shitchatapp.classes;
 
+@SuppressWarnings("unused")
 public class User {
 
-    public String email;
-    public String username;
-    public String image;
+    private String email;
+    private String username;
+    private String image;
 
     public User() {
     }

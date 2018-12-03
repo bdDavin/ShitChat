@@ -1,4 +1,4 @@
-package se.shitchat.shitchatapp;
+package se.shitchat.shitchatapp.classes;
 
 
 import java.text.DateFormat;
@@ -17,12 +17,14 @@ public class Chat {
     private ArrayList messages;
     private ArrayList<String> userId;
     private ArrayList<String> userNames;
+    private String lastUpdated;
 
     public String getLastUpdated() {
         return lastUpdated;
     }
 
-    private String lastUpdated;
+
+
     public Chat(){        image = "default";
     }
 
@@ -32,7 +34,7 @@ public class Chat {
         userNames = new ArrayList<>();
         image = "default";
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        DateFormat dateFormat = DateFormat.getDateInstance();
         Date date = new Date();
         this.lastUpdated = (dateFormat.format(date));
     }
@@ -53,11 +55,9 @@ public class Chat {
         this.name = name;
     }
 
-
     public void setMessages(ArrayList<String> messages) {
         this.messages = messages;
     }
-
 
     private void addUserId(String userId) {
         this.userId.add(userId);
@@ -79,7 +79,6 @@ public class Chat {
     public ArrayList<String> getUserNames() {
         return userNames;
     }
-
 
     public String getImage() {
         return image;

@@ -2,7 +2,6 @@ package se.shitchat.shitchatapp.activitys;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
@@ -35,7 +34,7 @@ import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import se.shitchat.shitchatapp.Message;
+import se.shitchat.shitchatapp.classes.Message;
 import se.shitchat.shitchatapp.R;
 import se.shitchat.shitchatapp.adapters.MessageAdapter;
 
@@ -53,9 +52,6 @@ public class MessageActivity extends AppCompatActivity {
     //from group
     private String groupId = "kemywcCWdHKO5ESZpSZn";
     private boolean ImActive;
-    private boolean addToChat = false;
-    private Boolean groupIsActive = false;
-    private String groupName;
     private FirebaseAuth mAuth;
 
 
@@ -68,11 +64,8 @@ public class MessageActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         groupId = intent.getStringExtra("groupId");
-        groupName = intent.getStringExtra("groupName");
+        String groupName = intent.getStringExtra("groupName");
 
-        if (groupName == null) {
-            groupName = "inget namn skickas med";
-        }
 
 
         initialization();
@@ -85,7 +78,7 @@ public class MessageActivity extends AppCompatActivity {
 
 
         //sendbutton
-        sendButton.setOnClickListener(this::sendButtonPressed);
+        sendButton.setOnClickListener(v1 -> sendButtonPressed());
 
 
         //insert items to recycler
@@ -99,7 +92,7 @@ public class MessageActivity extends AppCompatActivity {
                 {
                     case KeyEvent.KEYCODE_DPAD_CENTER:
                     case KeyEvent.KEYCODE_ENTER:
-                        sendButtonPressed(v);
+                        sendButtonPressed();
                         return true;
                     default:
                         break;
@@ -113,7 +106,7 @@ public class MessageActivity extends AppCompatActivity {
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
-                messageRecycler.getLayoutManager().smoothScrollToPosition(messageRecycler, null, adapter.getItemCount());
+                Objects.requireNonNull(messageRecycler.getLayoutManager()).smoothScrollToPosition(messageRecycler, null, adapter.getItemCount());
             }
         });
 
@@ -127,11 +120,9 @@ public class MessageActivity extends AppCompatActivity {
 
             Log.i("display", "Document has been updated");
             //recieves value from fire store
-            Boolean serverValue = documentSnapshot.getBoolean("active");
+            Boolean serverValue = Objects.requireNonNull(documentSnapshot).getBoolean("active");
             Log.i("display", "servervalue is: " +serverValue);
 
-            //test value
-            groupIsActive = serverValue != null && serverValue != false;
 
             //displays indicator
             displayTyping();
@@ -150,21 +141,21 @@ public class MessageActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
 
                     //test for groupname
-                    if (!document.getString("name").equals("default")) {
+                    if (!Objects.requireNonNull(document.getString("name")).equals("default")) {
                         Objects.requireNonNull(getSupportActionBar()).setTitle(document.getString("name"));
                     }
                     else {
                         //sets name to members
                         ArrayList<String> names = (ArrayList<String>) document.get("userNames");
-                        String groupName = "";
+                        StringBuilder groupName = new StringBuilder();
                         for (int i = 0; i < names.size(); i++) {
                             //exclude your username
                             if (!names.get(i).equalsIgnoreCase(mAuth.getCurrentUser().getDisplayName())) {
-                                groupName = groupName + names.get(i) + " ";
+                                groupName.append(names.get(i)).append(" ");
                             }
                         }
                         //sets name to toolbar
-                        Objects.requireNonNull(getSupportActionBar()).setTitle(groupName);
+                        Objects.requireNonNull(getSupportActionBar()).setTitle(groupName.toString());
                     }
                 });
     }
@@ -281,7 +272,8 @@ public class MessageActivity extends AppCompatActivity {
 
 
     private void displayTyping() {
-        Log.i("display", "displayTyping: im: " +ImActive +" group is: " +groupIsActive);
+        Boolean groupIsActive = false;
+        Log.i("display", "displayTyping: im: " +ImActive +" group is: " + groupIsActive);
         if (!ImActive && groupIsActive) {
             Log.i("display", "buble is VISIBLE");
             inputIndicator.setVisibility(View.VISIBLE);
@@ -296,7 +288,7 @@ public class MessageActivity extends AppCompatActivity {
 
 
     /************************** Sending picture  ************/
-    static final int REQUEST_IMAGE_GALLERY = 1337;
+    private static final int REQUEST_IMAGE_GALLERY = 1337;
 
     private void openGallery() {
         //open gallery
@@ -324,19 +316,17 @@ public class MessageActivity extends AppCompatActivity {
             UploadTask uploadTask = imagesRef.putFile(imageUri);
 
             // Register observers to listen for when the download is done or if it fails
-            uploadTask.addOnSuccessListener(taskSnapshot -> {
-                imagesRef.getDownloadUrl()
-                        .addOnCompleteListener(task -> {
-                            //saves download link
-                            imageURL = task.getResult().toString();
+            uploadTask.addOnSuccessListener(taskSnapshot -> imagesRef.getDownloadUrl()
+                    .addOnCompleteListener(task -> {
+                        //saves download link
+                        imageURL = task.getResult().toString();
 
-                            //sends image
-                            if (imageURL != null) {
-                                sendButtonPressed(findViewById(android.R.id.content));
-                                showImageSnack();
-                            }
-                        });
-            });
+                        //sends image
+                        if (imageURL != null) {
+                            sendButtonPressed();
+                            showImageSnack();
+                        }
+                    }));
         }
     }
 
@@ -345,7 +335,7 @@ public class MessageActivity extends AppCompatActivity {
 
     /******************* cammera ***************************/
     /* TODO IN PROGRESS */
-    static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -355,56 +345,10 @@ public class MessageActivity extends AppCompatActivity {
     }
 
 
-    public void fullScreen() {
-
-        // BEGIN_INCLUDE (get_current_ui_flags)
-        // The UI options currently enabled are represented by a bitfield.
-        // getSystemUiVisibility() gives us that bitfield.
-        int uiOptions = getWindow().getDecorView().getSystemUiVisibility();
-        int newUiOptions = uiOptions;
-        // END_INCLUDE (get_current_ui_flags)
-        // BEGIN_INCLUDE (toggle_ui_flags)
-        boolean isImmersiveModeEnabled =
-                ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
-        if (isImmersiveModeEnabled) {
-            Log.i("image", "Turning immersive mode mode off. ");
-        } else {
-            Log.i("image", "Turning immersive mode mode on.");
-        }
-
-        // Navigation bar hiding:  Backwards compatible to ICS.
-        if (Build.VERSION.SDK_INT >= 14) {
-            newUiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        }
-
-        // Status bar hiding: Backwards compatible to Jellybean
-        if (Build.VERSION.SDK_INT >= 16) {
-            newUiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
-        }
-
-        // Immersive mode: Backward compatible to KitKat.
-        // Note that this flag doesn't do anything by itself, it only augments the behavior
-        // of HIDE_NAVIGATION and FLAG_FULLSCREEN.  For the purposes of this sample
-        // all three flags are being toggled together.
-        // Note that there are two immersive mode UI flags, one of which is referred to as "sticky".
-        // Sticky immersive mode differs in that it makes the navigation and status bars
-        // semi-transparent, and the UI flag does not get cleared when the user interacts with
-        // the screen.
-        if (Build.VERSION.SDK_INT >= 18) {
-            newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        }
-
-        getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
-        //END_INCLUDE (set_ui_flags)
-    }
-
-
-
-
     /********************** Buttons ***********************/
 
 
-    private void sendButtonPressed(View v) {
+    private void sendButtonPressed() {
 
         //get user info
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -417,7 +361,7 @@ public class MessageActivity extends AppCompatActivity {
         ediMessage.setText("");
 
         //disables sending empty messages
-        if (input.length() <= 0 && imageURL == "default") {
+        if (input.length() <= 0 && Objects.equals(imageURL, "default")) {
             return;
         }
         //creates message
@@ -457,7 +401,7 @@ public class MessageActivity extends AppCompatActivity {
     public void searchUsers(MenuItem item) {
         Intent i = new Intent(this, SearchActivity.class);
 
-        addToChat = true;
+        boolean addToChat = true;
         i.putExtra("addToChat", addToChat);
 
         i.putExtra("groupId", groupId);
@@ -476,7 +420,7 @@ public class MessageActivity extends AppCompatActivity {
         openGallery();
     }
 
-    public void cameraButtonPressed(View view) {
+    public void cameraButtonPressed() {
         dispatchTakePictureIntent();
     }
 

@@ -13,6 +13,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
+import java.util.Objects;
+
 public abstract class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback{
     private final Drawable deleteIcon;
     private final int intrinsicWidth;
@@ -20,20 +22,11 @@ public abstract class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallba
     private final ColorDrawable background;
     private final int backgroundColor;
     private final Paint clearPaint;
-    Context context;
-
-    public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-        // To disable "swipe" for specific item return 0 here.
-        //if (viewHolder.getAdapterPosition() == 10)
-        //    return 0;
-        return super.getMovementFlags(recyclerView, viewHolder);
-    }
 
     public SwipeToDeleteCallback(Context context) {
         super(0, ItemTouchHelper.LEFT);
-        this.context = context;
         deleteIcon = context.getDrawable(R.drawable.outline_delete_forever_white_18dp);
-        intrinsicWidth = deleteIcon.getIntrinsicWidth();
+        intrinsicWidth = Objects.requireNonNull(deleteIcon).getIntrinsicWidth();
         intrinsicHeight = deleteIcon.getIntrinsicHeight();
         background = new ColorDrawable();
         backgroundColor = Color.parseColor("#f44336");
@@ -59,7 +52,7 @@ public abstract class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallba
 
         if (isCanceled) {
             clearCanvas(canvas, itemView.getRight() + dX, itemView.getTop() *1.0f, itemView.getRight()*1.0f, itemView.getBottom()*1.0f);
-            super.onChildDraw(canvas, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            super.onChildDraw(canvas, recyclerView, viewHolder, dX, dY, actionState, false);
             return;
         }
 

@@ -39,7 +39,8 @@
             android:parentActivityName=".activitys.MainActivity" />
         <activity android:name=".activitys.GroupProfileActivity" />
 
-        <service android:name=".notification.MessagingService">
+        <service android:name=".notification.MessagingService"
+            android:permission="">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

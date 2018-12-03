@@ -9,11 +9,11 @@ import android.widget.TextView;
 import se.shitchat.shitchatapp.R;
 
 public class ChatsViewHolder extends RecyclerView.ViewHolder {
-    public TextView chatsUsername;
-    public TextView lastMessage;
-    public ImageView profileImage;
-    public ConstraintLayout chatsParent;
-    public TextView date;
+    public final TextView chatsUsername;
+    public final TextView lastMessage;
+    public final ImageView profileImage;
+    public final ConstraintLayout chatsParent;
+    public final TextView date;
 
     public ChatsViewHolder(View itemView) {
         super(itemView);

@@ -1,13 +1,11 @@
-package se.shitchat.shitchatapp;
+package se.shitchat.shitchatapp.classes;
 
 
 
 import com.google.firebase.firestore.ServerTimestamp;
 
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 
@@ -70,7 +68,7 @@ public class Message {
 
     public void setCreationDate() {
         if (this.creationDate == null) {
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             Date date = new Date();
             this.creationDate = (dateFormat.format(date)); //2016/11/16 12:08:43
         }

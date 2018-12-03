@@ -10,22 +10,22 @@ import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import se.shitchat.shitchatapp.Chat;
+import java.util.Objects;
+
+import se.shitchat.shitchatapp.classes.Chat;
 import se.shitchat.shitchatapp.activitys.MessageActivity;
 import se.shitchat.shitchatapp.R;
-import se.shitchat.shitchatapp.User;
+import se.shitchat.shitchatapp.classes.User;
 
 public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.SearchHolder> {
 
-    public FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    public FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     public static String groupID;
 
     public SearchAdapter(@NonNull FirestoreRecyclerOptions<User> options) {
@@ -61,13 +61,10 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
                 group.update("userNames", FieldValue.arrayUnion(model.getUsername()));
 
                 // Atomically add a new user id to the "UserId" array field.
-                group.update("userId", FieldValue.arrayUnion(getSnapshots().getSnapshot(position).getId())).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Intent i = new Intent(v.getContext(), MessageActivity.class);
-                        i.putExtra("groupId", groupId);
-                        v.getContext().startActivity(i);
-                    }
+                group.update("userId", FieldValue.arrayUnion(getSnapshots().getSnapshot(position).getId())).addOnCompleteListener(task -> {
+                    Intent i = new Intent(v.getContext(), MessageActivity.class);
+                    i.putExtra("groupId", groupId);
+                    v.getContext().startActivity(i);
                 });
 
             }
@@ -76,7 +73,7 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
                 //creates new group
                 String groupName = "default";
                 Chat chat = new Chat(groupName);
-                String userId = mAuth.getCurrentUser().getUid();
+                String userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
                 String userName = mAuth.getCurrentUser().getDisplayName();
                 chat.addUser(userName, userId);
 
@@ -86,15 +83,12 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
                 chat.addUser(friendname, friendId);
 
 
-                db.collection("groups").add(chat).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                        DocumentReference document = task.getResult();
-                        String newId = document.getId();
-                        Intent i = new Intent(v.getContext(), MessageActivity.class);
-                        i.putExtra("groupId", newId);
-                        v.getContext().startActivity(i);
-                    }
+                db.collection("groups").add(chat).addOnCompleteListener(task -> {
+                    DocumentReference document = task.getResult();
+                    String newId = Objects.requireNonNull(document).getId();
+                    Intent i = new Intent(v.getContext(), MessageActivity.class);
+                    i.putExtra("groupId", newId);
+                    v.getContext().startActivity(i);
                 });
             }
 
@@ -115,10 +109,10 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
     //Setup recycler view items
     class SearchHolder extends RecyclerView.ViewHolder {
 
-        TextView username;
-        View userParent;
+        final TextView username;
+        final View userParent;
 
-        public SearchHolder(@NonNull View itemView) {
+        SearchHolder(@NonNull View itemView) {
             super(itemView);
             username = itemView.findViewById(R.id.userUsername);
             userParent = itemView.findViewById(R.id.user_parent);

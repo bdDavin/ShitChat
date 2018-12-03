@@ -11,10 +11,10 @@ import se.shitchat.shitchatapp.R;
 public class MessageHolder extends RecyclerView.ViewHolder {
 
     //Fields
-    public TextView dateView;
+    public final TextView dateView;
     public final TextView messageView;
-    public ImageView pictureView;
-    public TextView senderView;
+    public final ImageView pictureView;
+    public final TextView senderView;
 
     public MessageHolder(@NonNull View itemView) {
         super(itemView);

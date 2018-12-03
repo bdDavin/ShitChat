@@ -23,7 +23,7 @@ import se.shitchat.shitchatapp.R;
  * This class makes heavy use of the {@link NotificationCompat.Builder} helper
  * class to create notifications in a backward-compatible way.
  */
-public class NewMessageNotification {
+class NewMessageNotification {
     /**
      * The unique identifier for this type of notification.
      */
@@ -114,12 +114,10 @@ public class NewMessageNotification {
     private static void notify(final Context context, final Notification notification) {
         final NotificationManager nm = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("notify01", "Some description",
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            nm.createNotificationChannel(channel);
-            nm.notify(NOTIFICATION_TAG, 0, notification);
-        }
+        NotificationChannel channel = new NotificationChannel("notify01", "Some description",
+                NotificationManager.IMPORTANCE_DEFAULT);
+        nm.createNotificationChannel(channel);
+        nm.notify(NOTIFICATION_TAG, 0, notification);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
             nm.notify(NOTIFICATION_TAG, 0, notification);
         } else {
@@ -131,10 +129,6 @@ public class NewMessageNotification {
     public static void cancel(final Context context) {
         final NotificationManager nm = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-            nm.cancel(NOTIFICATION_TAG, 0);
-        } else {
-            nm.cancel(NOTIFICATION_TAG.hashCode());
-        }
+        nm.cancel(NOTIFICATION_TAG, 0);
     }
 }
