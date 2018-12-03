@@ -4,6 +4,10 @@
 
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <uses-feature android:name="android.hardware.camera"
+        android:required="true" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -11,7 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".activitys.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,8 +23,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MessageActivity"
-            android:parentActivityName=".MainActivity">
+            android:name=".activitys.MessageActivity"
+            android:parentActivityName=".activitys.MainActivity">
             <intent-filter>
                 <action android:name="NewMessages" />
 
@@ -28,14 +32,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ProfileActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name=".activitys.ProfileActivity"
+            android:parentActivityName=".activitys.MainActivity" />
         <activity
-            android:name=".SearchActivity"
-            android:parentActivityName=".MainActivity" />
-        <activity android:name=".GroupProfileActivity" />
+            android:name=".activitys.SearchActivity"
+            android:parentActivityName=".activitys.MainActivity" />
+        <activity android:name=".activitys.GroupProfileActivity" />
 
-        <service android:name=".MessagingService">
+        <service android:name=".notification.MessagingService"
+            android:permission="">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

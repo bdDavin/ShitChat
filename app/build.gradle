@@ -5,7 +5,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "se.shitchat.shitchatapp"
-        minSdkVersion 24
+        minSdkVersion 27
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -45,4 +45,9 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.google.firebase:firebase-storage:16.0.5'
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
+
+
+
+    implementation 'com.github.bumptech.glide:glide:4.0.0'
 }

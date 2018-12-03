@@ -1,11 +1,10 @@
-package se.shitchat.shitchatapp;
+package se.shitchat.shitchatapp.activitys;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
@@ -14,18 +13,19 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import se.shitchat.shitchatapp.R;
+import se.shitchat.shitchatapp.classes.User;
+import se.shitchat.shitchatapp.adapters.SearchAdapter;
+
 public class SearchActivity extends AppCompatActivity {
 
-    private Toolbar searchToolbar;
     private FirebaseFirestore db;
-    private RecyclerView searchRecycler;
     private ImageButton searchButton;
     private SearchAdapter searchAdapter;
     private Query userDb;
     private EditText input;
     private Query query;
     private String searchInput;
-    private FirebaseAuth mAuth;
 
 
     @Override
@@ -36,11 +36,11 @@ public class SearchActivity extends AppCompatActivity {
         //Initialise widgets
         input = findViewById(R.id.editText);
         searchButton = findViewById(R.id.imageButtonSearch);
-        searchToolbar = findViewById(R.id.searchToolbar);
-        searchRecycler = findViewById(R.id.searchRecyclerView);
+        Toolbar searchToolbar = findViewById(R.id.searchToolbar);
+        RecyclerView searchRecycler = findViewById(R.id.searchRecyclerView);
 
         setSupportActionBar(searchToolbar);
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         db = FirebaseFirestore.getInstance();
 
@@ -58,32 +58,22 @@ public class SearchActivity extends AppCompatActivity {
     private void onClickSetup() {
 
         //Listens for "enter"
-        input.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                searchClicked();
-
-            }
-        });
+        input.setOnClickListener(view -> searchClicked());
 
         //Listens for search button
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        searchButton.setOnClickListener(view -> {
 
-                searchInput = input.getText().toString();
-                searchClicked();
+            searchInput = input.getText().toString();
+            searchClicked();
 
-        userDb = db.collection("users").whereEqualTo("username", searchInput);
+    userDb = db.collection("users").whereEqualTo("username", searchInput);
 
-        setUpSearchRecycler();
+    setUpSearchRecycler();
 
-        searchAdapter.startListening();
+    searchAdapter.startListening();
 
 
 
-            }
         });
 
     }
@@ -136,12 +126,6 @@ public class SearchActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         this.finish();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
     }
 
     @Override

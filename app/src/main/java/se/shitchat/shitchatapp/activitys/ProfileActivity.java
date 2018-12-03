@@ -1,4 +1,4 @@
-package se.shitchat.shitchatapp;
+package se.shitchat.shitchatapp.activitys;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -17,36 +17,36 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.util.Objects;
+
+import se.shitchat.shitchatapp.R;
+
 public class ProfileActivity extends AppCompatActivity {
 
-    private Toolbar t;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private StorageReference storageRef;
-    private TextView userName;
     private ImageView userImage;
-    private Uri imageUri;
-    private UploadTask uploadTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        t = findViewById(R.id.profileToolbar);
+        Toolbar t = findViewById(R.id.profileToolbar);
         setSupportActionBar(t);
-        userName = findViewById(R.id.usernameText);
+        TextView userName = findViewById(R.id.usernameText);
         userImage = findViewById(R.id.profile_image);
         userImage.setOnClickListener(v -> changeProfileImage());
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         storageRef = FirebaseStorage.getInstance().getReference();
         //displays username
-        userName.setText(mAuth.getCurrentUser().getDisplayName());
+        userName.setText(Objects.requireNonNull(mAuth.getCurrentUser()).getDisplayName());
         setProfileImage();
     }
 
@@ -61,22 +61,20 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1337 && resultCode == RESULT_OK && data != null && data.getData() != null){
-            imageUri = data.getData();
+            Uri imageUri = data.getData();
 
-            StorageReference imagesRef = storageRef.child("images/"+imageUri.getLastPathSegment());
-            uploadTask = imagesRef.putFile(imageUri);
+            StorageReference imagesRef = storageRef.child("images/"+ imageUri.getLastPathSegment());
+            UploadTask uploadTask = imagesRef.putFile(imageUri);
             // Register observers to listen for when the download is done or if it fails
-            uploadTask.addOnSuccessListener(taskSnapshot -> {
-                imagesRef.getDownloadUrl()
-                        .addOnCompleteListener(task -> {
-                            String URL = task.getResult().toString();
-                            db.collection("users")
-                                    .document(mAuth.getCurrentUser().getUid())
-                                    .update("image", URL);
-                            setProfileImage();
-                            Log.d("hej", "onActivityResult: "+ URL);
-                        });
-            });
+            uploadTask.addOnSuccessListener(taskSnapshot -> imagesRef.getDownloadUrl()
+                    .addOnCompleteListener(task -> {
+                        String URL = Objects.requireNonNull(task.getResult()).toString();
+                        db.collection("users")
+                                .document(mAuth.getCurrentUser().getUid())
+                                .update("image", URL);
+                        setProfileImage();
+                        Log.d("hej", "onActivityResult: "+ URL);
+                    }));
         }
     }
     private void setProfileImage(){

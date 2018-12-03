@@ -6,7 +6,22 @@
     android:layout_height="match_parent"
     android:background="@color/colorAccent"
     android:windowSoftInputMode="adjustResize"
-    tools:context=".MessageActivity">
+    tools:context=".activitys.MessageActivity">
+
+    <ImageButton
+        android:id="@+id/imageButton2"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:onClick="addImagePressed"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageButton"
+        app:layout_constraintTop_toTopOf="@+id/message_edit"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/cameraicon"
+        tools:srcCompat="@drawable/cameraicon" />
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/messageToolbar"
@@ -40,7 +55,6 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
-        android:background="@color/colorAccent"
         android:src="@drawable/sendicon"
         android:text="@string/send_Button"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -51,8 +65,8 @@
 
     <EditText
         android:id="@+id/message_edit"
-        android:layout_width="207dp"
-        android:layout_height="44dp"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -63,31 +77,34 @@
         android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/send_button"
-        app:layout_constraintStart_toEndOf="@+id/imageButton"
+        app:layout_constraintStart_toEndOf="@+id/imageButton2"
         app:layout_constraintTop_toBottomOf="@+id/recyclerView"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.444" />
 
     <ImageButton
         android:id="@+id/imageButton"
         android:layout_width="46dp"
         android:layout_height="46dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@color/colorAccent"
         android:onClick="addImagePressed"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/message_edit"
-        app:srcCompat="@drawable/cameraicon"
-        tools:srcCompat="@drawable/cameraicon" />
+        app:srcCompat="@drawable/image"
+        tools:srcCompat="@drawable/image" />
 
     <ImageView
         android:id="@+id/image_view_active"
         android:layout_width="60dp"
         android:layout_height="30dp"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/message_edit"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/typingicon"
         tools:srcCompat="@drawable/typingicon" />
+
 
 </android.support.constraint.ConstraintLayout>

@@ -1,4 +1,4 @@
-package se.shitchat.shitchatapp;
+package se.shitchat.shitchatapp.notification;
 
 import android.annotation.TargetApi;
 import android.app.Notification;
@@ -10,9 +10,11 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
+
+import se.shitchat.shitchatapp.activitys.MessageActivity;
+import se.shitchat.shitchatapp.R;
 
 /**
  * Helper class for showing and canceling new message
@@ -21,7 +23,7 @@ import android.support.v4.app.NotificationCompat;
  * This class makes heavy use of the {@link NotificationCompat.Builder} helper
  * class to create notifications in a backward-compatible way.
  */
-public class NewMessageNotification {
+class NewMessageNotification {
     /**
      * The unique identifier for this type of notification.
      */
@@ -63,7 +65,7 @@ public class NewMessageNotification {
                 .setDefaults(Notification.DEFAULT_ALL)
 
                 // Beskrivning + en mindre icon
-                .setSmallIcon(R.drawable.ic_stat_new_message)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setChannelId("notify01")
@@ -112,12 +114,10 @@ public class NewMessageNotification {
     private static void notify(final Context context, final Notification notification) {
         final NotificationManager nm = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("notify01", "Some description",
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            nm.createNotificationChannel(channel);
-            nm.notify(NOTIFICATION_TAG, 0, notification);
-        }
+        NotificationChannel channel = new NotificationChannel("notify01", "Some description",
+                NotificationManager.IMPORTANCE_DEFAULT);
+        nm.createNotificationChannel(channel);
+        nm.notify(NOTIFICATION_TAG, 0, notification);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
             nm.notify(NOTIFICATION_TAG, 0, notification);
         } else {
@@ -129,10 +129,6 @@ public class NewMessageNotification {
     public static void cancel(final Context context) {
         final NotificationManager nm = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-            nm.cancel(NOTIFICATION_TAG, 0);
-        } else {
-            nm.cancel(NOTIFICATION_TAG.hashCode());
-        }
+        nm.cancel(NOTIFICATION_TAG, 0);
     }
 }

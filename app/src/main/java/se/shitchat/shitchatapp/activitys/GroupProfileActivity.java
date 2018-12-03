@@ -1,4 +1,4 @@
-package se.shitchat.shitchatapp;
+package se.shitchat.shitchatapp.activitys;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -22,18 +22,18 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Objects;
+
+import se.shitchat.shitchatapp.R;
 
 public class GroupProfileActivity extends AppCompatActivity {
 
-    private Toolbar t;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private StorageReference storageRef;
     private TextView groupName;
     private ImageView groupImage;
     private EditText editText;
-    private Uri imageUri;
-    private UploadTask uploadTask;
     private String groupId;
 
     @Override
@@ -41,7 +41,7 @@ public class GroupProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_profile);
 
-        t = findViewById(R.id.groupProfileToolbar);
+        Toolbar t = findViewById(R.id.groupProfileToolbar);
         setSupportActionBar(t);
         groupName = findViewById(R.id.groupNameText);
         groupImage = findViewById(R.id.groupProfile_image);
@@ -88,26 +88,24 @@ public class GroupProfileActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1337 && resultCode == RESULT_OK && data != null && data.getData() != null){
-            imageUri = data.getData();
+            Uri imageUri = data.getData();
 
-            StorageReference imagesRef = storageRef.child("images/"+imageUri.getLastPathSegment());
-            uploadTask = imagesRef.putFile(imageUri);
+            StorageReference imagesRef = storageRef.child("images/"+ imageUri.getLastPathSegment());
+            UploadTask uploadTask = imagesRef.putFile(imageUri);
             // Register observers to listen for when the download is done or if it fails
-            uploadTask.addOnSuccessListener(taskSnapshot -> {
-                imagesRef.getDownloadUrl()
-                        .addOnCompleteListener(task -> {
-                            String URL = task.getResult().toString();
-                            db.collection("groups")
-                                    .document(groupId)
-                                    .update("image", URL);
-                            setProfileImage();
-                            Log.d("hej", "onActivityResult: "+ URL);
-                        });
-            });
+            uploadTask.addOnSuccessListener(taskSnapshot -> imagesRef.getDownloadUrl()
+                    .addOnCompleteListener(task -> {
+                        String URL = Objects.requireNonNull(task.getResult()).toString();
+                        db.collection("groups")
+                                .document(groupId)
+                                .update("image", URL);
+                        setProfileImage();
+                        Log.d("hej", "onActivityResult: "+ URL);
+                    }));
         }
     }
 
-    public void displayGroupName() {
+    private void displayGroupName() {
         db.collection("groups")
                 .document(groupId)
                 .get()
@@ -116,14 +114,16 @@ public class GroupProfileActivity extends AppCompatActivity {
                     if (!document.getString("name").equals("default")) {
                         groupName.setText(document.getString("name"));
                     } else {
+
+
                         ArrayList<String> names = (ArrayList<String>) document.get("userNames");
-                        String groupNames = "";
-                        for (int i = 0; i < names.size(); i++) {
+                        StringBuilder groupNames = new StringBuilder();
+                        for (int i = 0; i < Objects.requireNonNull(names).size(); i++) {
                             if (!names.get(i).equalsIgnoreCase(mAuth.getCurrentUser().getDisplayName())) {
-                                groupNames = groupNames + names.get(i) + " ";
+                                groupNames.append(names.get(i)).append(" ");
                             }
                         }
-                        groupName.setText(groupNames);
+                        groupName.setText(groupNames.toString());
                     }
                 });
     }
@@ -150,7 +150,7 @@ public class GroupProfileActivity extends AppCompatActivity {
         editText.setVisibility(View.VISIBLE);
     }
 
-    public void editName(){
+    private void editName(){
         db.collection("groups")
                 .document(groupId)
                 .update("name", editText.getText().toString());

@@ -1,4 +1,4 @@
-package se.shitchat.shitchatapp;
+package se.shitchat.shitchatapp.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -11,11 +11,16 @@ import android.widget.ImageView;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
+import se.shitchat.shitchatapp.classes.Message;
+import se.shitchat.shitchatapp.holders.MessageHolder;
+import se.shitchat.shitchatapp.R;
 
-class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder> {
+
+public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder> {
 
     private static final int VIEW_TYPE_ME = 1;
     private static final int VIEW_TYPE_OTHER = 2;
@@ -29,7 +34,7 @@ class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerView.View
 
 
     @Override
-    protected void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, Message model) {
+    protected void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull Message model) {
 
         //displays information
             MessageHolder hold = (MessageHolder) holder;
@@ -39,18 +44,27 @@ class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerView.View
 
 
         //displays imageview if picture is sent
-        if (model.getImage() != null) {
-            hold.pictureView.setImageResource(R.drawable.default_profile);
-            //TODO load image from url = model.getImage()
-            //hold.pictureView.setImageResource(model.getImage());
+        if (model.getImage() != null && !Objects.equals(model.getImage(), "default")) {
+            Picasso.get().load(model.getImage()).into(hold.pictureView);
 
-            if (hold.pictureView.getDrawable() != null);
+            if (hold.pictureView.getDrawable() != null)
             hold.pictureView.setVisibility(View.VISIBLE);
+            hold.messageView.setVisibility(View.GONE);
         }
         else {
             hold.pictureView.setVisibility(View.GONE);
+            hold.messageView.setVisibility(View.VISIBLE);
         }
 
+        hold.pictureView.setOnClickListener(this::viewImage);
+
+    }
+
+    private void viewImage(View v) {
+        //TODO fullscreen image
+        ImageView i = (ImageView) (v);
+
+        Log.i("image", "viewImage: " +i.getDrawable());
     }
 
     @NonNull
@@ -83,7 +97,7 @@ class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerView.View
     @Override
     public int getItemViewType(int position) {
         if (this.getItem(position).getUid().equals(
-                FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
             return VIEW_TYPE_ME;
         } else {
             return VIEW_TYPE_OTHER;
