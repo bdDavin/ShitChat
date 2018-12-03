@@ -101,8 +101,7 @@ class NewMessageNotification {
                 // later.
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(message)
-                        .setBigContentTitle(title)
-                        .setSummaryText("Dummy summary text"))
+                        .setBigContentTitle(title))
 
                 // Automatically dismiss the notification when it is touched.
                 .setAutoCancel(true);

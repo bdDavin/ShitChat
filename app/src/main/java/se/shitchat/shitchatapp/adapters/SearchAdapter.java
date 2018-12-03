@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -16,6 +17,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Objects;
+import com.squareup.picasso.Picasso;
 
 import se.shitchat.shitchatapp.classes.Chat;
 import se.shitchat.shitchatapp.activitys.MessageActivity;
@@ -38,6 +40,13 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
     protected void onBindViewHolder(@NonNull SearchHolder holder, int position, @NonNull User model) {
 
         holder.username.setText(model.getUsername());
+
+        String userUrl = model.getImage();
+        if (userUrl == null || userUrl.equals("default")) {
+            holder.userImage.setImageResource(R.drawable.default_profile);
+        } else {
+            Picasso.get().load(userUrl).into(holder.userImage);
+        }
 
         chooseUser(holder, position, model);
 
@@ -109,13 +118,15 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
     //Setup recycler view items
     class SearchHolder extends RecyclerView.ViewHolder {
 
-        final TextView username;
-        final View userParent;
+        TextView username;
+        View userParent;
+        ImageView userImage;
 
         SearchHolder(@NonNull View itemView) {
             super(itemView);
             username = itemView.findViewById(R.id.userUsername);
             userParent = itemView.findViewById(R.id.user_parent);
+            userImage = itemView.findViewById(R.id.userProfileImage);
         }
 
     }
