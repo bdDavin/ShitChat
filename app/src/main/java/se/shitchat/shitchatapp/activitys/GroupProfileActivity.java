@@ -49,7 +49,7 @@ public class GroupProfileActivity extends AppCompatActivity {
         groupId = getIntent().getStringExtra("groupId");
         editText = findViewById(R.id.editTextName);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mAuth = FirebaseAuth.getInstance();

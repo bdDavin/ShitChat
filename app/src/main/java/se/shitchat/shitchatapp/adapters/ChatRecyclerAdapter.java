@@ -1,4 +1,4 @@
-package se.shitchat.shitchatapp.activitys;
+package se.shitchat.shitchatapp.adapters;
 
 
 import android.content.Intent;
@@ -17,13 +17,12 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import se.shitchat.shitchatapp.classes.Chat;
 import se.shitchat.shitchatapp.R;
+import se.shitchat.shitchatapp.activitys.MessageActivity;
+import se.shitchat.shitchatapp.classes.Chat;
 import se.shitchat.shitchatapp.holders.ChatsViewHolder;
 
-import static com.firebase.ui.auth.AuthUI.getApplicationContext;
-
-class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chat, ChatsViewHolder> {
+public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chat, ChatsViewHolder> {
 
 
 
@@ -100,7 +99,7 @@ class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chat, ChatsViewHolder
         //sätter en onClick på alla items så när man klickar öppnas meddelandeaktivitetn
         //och skickar med grupp dokumentets namn
         holder.chatsParent.setOnClickListener(v -> {
-            Intent i = new Intent(getApplicationContext(), MessageActivity.class);
+            Intent i = new Intent(v.getContext(), MessageActivity.class);
             i.putExtra("groupId", groupId);
             i.putExtra("groupName", holder.chatsUsername.getText());
             v.getContext().startActivity(i);
