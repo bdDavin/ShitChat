@@ -158,4 +158,5 @@ public class GroupProfileActivity extends AppCompatActivity {
         groupName.setVisibility(View.VISIBLE);
         displayGroupName();
     }
+
 }

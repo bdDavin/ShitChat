@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ic_launcher_background"
+    android:background="@color/colorAccent"
     android:windowSoftInputMode="adjustResize"
     tools:context=".MessageActivity">
 
@@ -40,6 +40,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
+        android:background="@color/colorAccent"
         android:src="@drawable/sendicon"
         android:text="@string/send_Button"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -71,6 +72,7 @@
         android:layout_width="46dp"
         android:layout_height="46dp"
         android:layout_marginStart="8dp"
+        android:background="@color/colorAccent"
         android:onClick="addImagePressed"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

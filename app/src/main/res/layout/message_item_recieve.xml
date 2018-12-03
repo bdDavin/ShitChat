@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|start"
                 android:layout_marginBottom="4dp"
-                android:textColor="@color/default_bubble_color_send_text"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:visibility="visible"
@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:gravity="center_vertical|start"
-                android:textColor="@color/default_bubble_color_send_text"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused"
                 android:textSize="@dimen/default_message_text_size"
                 tools:text="My name is Timi and I am..." />
 
@@ -66,7 +66,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:gravity="center_vertical|end"
-                android:textColor="@color/default_bubble_color_send_text"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused"
                 android:textSize="12sp"
                 tools:text="12:10 am" />
 

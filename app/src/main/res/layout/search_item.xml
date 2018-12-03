@@ -13,12 +13,12 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_image"
-        android:layout_width="77dp"
+        android:layout_width="58dp"
         android:layout_height="match_parent"
-        android:src="@drawable/default_profile"
         android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp" />
+        android:src="@drawable/default_profile" />
 
     <LinearLayout
         android:layout_width="match_parent"

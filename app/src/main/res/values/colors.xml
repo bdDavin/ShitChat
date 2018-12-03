@@ -2,8 +2,8 @@
 <resources>
     <color name="colorPrimary">#e7f88a00</color>
     <color name="colorPrimaryDark">#c25e00</color>
-    <color name="colorAccent">#e6e6e6</color>
+    <color name="colorAccent">#ffffff</color>
     <color name="default_message_color_rcv">#d4d71d</color>
     <color name="default_bubble_color_send">#97d26e02</color>
-    <color name="default_bubble_color_send_text">#000000</color>
+    <color name="default_bubble_color_send_text">#ffffff</color>
 </resources>
