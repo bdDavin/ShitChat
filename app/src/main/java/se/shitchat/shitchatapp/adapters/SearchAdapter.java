@@ -2,7 +2,6 @@ package se.shitchat.shitchatapp.adapters;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
@@ -21,8 +21,9 @@ import se.shitchat.shitchatapp.classes.Chat;
 import se.shitchat.shitchatapp.activitys.MessageActivity;
 import se.shitchat.shitchatapp.R;
 import se.shitchat.shitchatapp.classes.User;
+import se.shitchat.shitchatapp.holders.SearchHolder;
 
-public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.SearchHolder> {
+public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchHolder> {
 
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -39,6 +40,7 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
 
         holder.username.setText(model.getUsername());
 
+        Picasso.get().load(model.getImage()).into(holder.userImage);
         chooseUser(holder, position, model);
 
     }
@@ -68,7 +70,7 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
                 });
 
             }
-            //creates a new group
+
             else {
                 //creates new group
                 String groupName = "default";
@@ -104,20 +106,6 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchAdapter.
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.search_item, viewGroup, false);
 
         return new SearchHolder(v);
-    }
-
-    //Setup recycler view items
-    class SearchHolder extends RecyclerView.ViewHolder {
-
-        final TextView username;
-        final View userParent;
-
-        SearchHolder(@NonNull View itemView) {
-            super(itemView);
-            username = itemView.findViewById(R.id.userUsername);
-            userParent = itemView.findViewById(R.id.user_parent);
-        }
-
     }
 
 }

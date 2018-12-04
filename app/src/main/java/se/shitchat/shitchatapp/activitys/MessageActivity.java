@@ -427,15 +427,8 @@ public class MessageActivity extends AppCompatActivity {
     //Handles back button
     @Override
     public void onBackPressed() {
-
-        ImageView fullScreen = findViewById(R.id.fullscreen_imageView);
-        if (fullScreen.getVisibility() == View.VISIBLE) {
-            fullScreen.setVisibility(View.INVISIBLE);
-        }
-        else {
-            super.onBackPressed();
-            //this.finish();
-        }
+        super.onBackPressed();
+        //this.finish();
     }
 
     //En snackbar som vissar vem som är inloggad

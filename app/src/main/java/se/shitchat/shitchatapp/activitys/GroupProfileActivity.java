@@ -3,6 +3,7 @@ package se.shitchat.shitchatapp.activitys;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -35,6 +36,7 @@ public class GroupProfileActivity extends AppCompatActivity {
     private ImageView groupImage;
     private EditText editText;
     private String groupId;
+    private String groupMembers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,17 +117,22 @@ public class GroupProfileActivity extends AppCompatActivity {
                         groupName.setText(document.getString("name"));
                     } else {
 
-
                         ArrayList<String> names = (ArrayList<String>) document.get("userNames");
-                        StringBuilder groupNames = new StringBuilder();
-                        for (int i = 0; i < Objects.requireNonNull(names).size(); i++) {
-                            if (!names.get(i).equalsIgnoreCase(mAuth.getCurrentUser().getDisplayName())) {
-                                groupNames.append(names.get(i)).append(" ");
-                            }
-                        }
-                        groupName.setText(groupNames.toString());
+                        groupMembers = getGroupMembers(names);
+                        groupName.setText(groupMembers);
                     }
                 });
+    }
+
+    @NonNull
+    private String getGroupMembers(ArrayList<String> names) {
+        StringBuilder groupNames = new StringBuilder();
+        for (int i = 0; i < Objects.requireNonNull(names).size(); i++) {
+            if (!names.get(i).equalsIgnoreCase(mAuth.getCurrentUser().getDisplayName())) {
+                groupNames.append(names.get(i)).append(" ");
+            }
+        }
+        return groupNames.toString();
     }
 
     private void setProfileImage(){
