@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ShitChat</string>
+    <string name="app_name">SuperChat</string>
     <string name="search">Search</string>
     <string name="messages">Messages</string>
     <string name="logged_in_as">Logged in as</string>

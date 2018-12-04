@@ -20,6 +20,8 @@ import java.util.Objects;
 import se.shitchat.shitchatapp.activitys.MessageActivity;
 import se.shitchat.shitchatapp.classes.Chat;
 import se.shitchat.shitchatapp.R;
+import se.shitchat.shitchatapp.activitys.MessageActivity;
+import se.shitchat.shitchatapp.classes.Chat;
 import se.shitchat.shitchatapp.holders.ChatsViewHolder;
 
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
@@ -75,7 +77,7 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chat, ChatsVie
                                     if (friendURL == null || friendURL.equals("default")) {
                                         holder.profileImage.setImageResource(R.drawable.default_profile);
                                     } else {
-                                        Picasso.get().load(friendURL).into(holder.profileImage);
+                                        Picasso.get().load(friendURL).placeholder(R.drawable.default_profile).into(holder.profileImage);
                                     }
                                 });
                 }
@@ -83,7 +85,7 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chat, ChatsVie
                 holder.profileImage.setImageResource(R.drawable.default_profile);
             }
         } else {
-            Picasso.get().load(imageUrl).into(holder.profileImage);
+            Picasso.get().load(imageUrl).placeholder(R.drawable.default_profile).into(holder.profileImage);
         }
         //frågar databasen efter det senaste meddelandet i gruppen och sätter det i vyn
         db.collection("groups")
@@ -101,7 +103,7 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chat, ChatsVie
         //sätter en onClick på alla items så när man klickar öppnas meddelandeaktivitetn
         //och skickar med grupp dokumentets namn
         holder.chatsParent.setOnClickListener(v -> {
-            Intent i = new Intent(getApplicationContext(), MessageActivity.class);
+            Intent i = new Intent(v.getContext(), MessageActivity.class);
             i.putExtra("groupId", groupId);
             i.putExtra("groupName", holder.chatsUsername.getText());
             v.getContext().startActivity(i);

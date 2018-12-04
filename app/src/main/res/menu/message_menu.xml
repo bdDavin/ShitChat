@@ -12,7 +12,8 @@
         <item
             android:id="@+id/settings"
             android:title="@string/settings"
-            app:showAsAction="never"
+            android:icon="@drawable/ic_settings_black_24dp"
+            app:showAsAction="always"
             android:onClick="settings"/>
 
 

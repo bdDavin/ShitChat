@@ -13,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-//firebase
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -32,8 +31,13 @@ import se.shitchat.shitchatapp.adapters.ChatRecyclerAdapter;
 import se.shitchat.shitchatapp.classes.Chat;
 import se.shitchat.shitchatapp.R;
 import se.shitchat.shitchatapp.SwipeToDeleteCallback;
+import se.shitchat.shitchatapp.adapters.ChatRecyclerAdapter;
+import se.shitchat.shitchatapp.classes.Chat;
 import se.shitchat.shitchatapp.classes.User;
 import se.shitchat.shitchatapp.holders.ChatsViewHolder;
+
+//firebase
+//shitchat
 
 public class MainActivity extends AppCompatActivity {
 

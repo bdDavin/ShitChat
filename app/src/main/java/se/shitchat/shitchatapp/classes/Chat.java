@@ -2,7 +2,6 @@ package se.shitchat.shitchatapp.classes;
 
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -36,7 +35,7 @@ public class Chat {
 
         DateFormat dateFormat = DateFormat.getDateInstance();
         Date date = new Date();
-        this.lastUpdated = (dateFormat.format(date));
+        lastUpdated = dateFormat.format(date);
     }
 
     public Chat(String name, ArrayList messages, ArrayList<String> users) {

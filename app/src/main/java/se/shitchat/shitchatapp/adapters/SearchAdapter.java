@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -16,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
+import com.squareup.picasso.Picasso;
 
 import se.shitchat.shitchatapp.classes.Chat;
 import se.shitchat.shitchatapp.activitys.MessageActivity;
@@ -40,7 +42,13 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchHolder> 
 
         holder.username.setText(model.getUsername());
 
-        Picasso.get().load(model.getImage()).into(holder.userImage);
+        String userUrl = model.getImage();
+        if (userUrl == null || userUrl.equals("default")) {
+            holder.userImage.setImageResource(R.drawable.default_profile);
+        } else {
+            Picasso.get().load(userUrl).into(holder.userImage);
+        }
+
         chooseUser(holder, position, model);
 
     }

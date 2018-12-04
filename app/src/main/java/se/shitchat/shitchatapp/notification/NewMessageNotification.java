@@ -59,7 +59,7 @@ class NewMessageNotification {
         Intent intent = new Intent(context, MessageActivity.class);
         intent.putExtra("groupId", groupId);
 
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"notify01" )
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "notify01")
 
                 // Inställningar för ljus vibration och ljud
                 .setDefaults(Notification.DEFAULT_ALL)
@@ -101,8 +101,7 @@ class NewMessageNotification {
                 // later.
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(message)
-                        .setBigContentTitle(title)
-                        .setSummaryText("Dummy summary text"))
+                        .setBigContentTitle(title))
 
                 // Automatically dismiss the notification when it is touched.
                 .setAutoCancel(true);
