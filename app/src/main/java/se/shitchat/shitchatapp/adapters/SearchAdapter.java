@@ -46,7 +46,7 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchHolder> 
         if (userUrl == null || userUrl.equals("default")) {
             holder.userImage.setImageResource(R.drawable.default_profile);
         } else {
-            Picasso.get().load(userUrl).into(holder.userImage);
+            Picasso.get().load(userUrl).placeholder(R.drawable.default_profile).into(holder.userImage);
         }
 
         chooseUser(holder, position, model);

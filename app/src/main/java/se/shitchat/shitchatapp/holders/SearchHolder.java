@@ -18,6 +18,6 @@ public class SearchHolder extends RecyclerView.ViewHolder {
         super(itemView);
         username = itemView.findViewById(R.id.userUsername);
         userParent = itemView.findViewById(R.id.user_parent);
-        userImage = itemView.findViewById(R.id.profile_image);
+        userImage = itemView.findViewById(R.id.userProfileImage);
     }
 }
