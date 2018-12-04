@@ -59,7 +59,7 @@ class NewMessageNotification {
         Intent intent = new Intent(context, MessageActivity.class);
         intent.putExtra("groupId", groupId);
 
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "notify01")
 
                 // Inställningar för ljus vibration och ljud
                 .setDefaults(Notification.DEFAULT_ALL)
@@ -68,7 +68,7 @@ class NewMessageNotification {
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(title)
                 .setContentText(message)
-                .setChannelId("notify01")
+                //.setChannelId("notify01")
 
                 // Allting under detta är bara frivilliga inställningar
                 // Default prioriteten passar bäst alla versioner efter 4.1

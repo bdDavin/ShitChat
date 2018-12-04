@@ -73,7 +73,7 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chat, ChatsVie
                                     if (friendURL == null || friendURL.equals("default")) {
                                         holder.profileImage.setImageResource(R.drawable.default_profile);
                                     } else {
-                                        Picasso.get().load(friendURL).into(holder.profileImage);
+                                        Picasso.get().load(friendURL).placeholder(R.drawable.default_profile).into(holder.profileImage);
                                     }
                                 });
                 }
@@ -81,7 +81,7 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chat, ChatsVie
                 holder.profileImage.setImageResource(R.drawable.default_profile);
             }
         } else {
-            Picasso.get().load(imageUrl).into(holder.profileImage);
+            Picasso.get().load(imageUrl).placeholder(R.drawable.default_profile).into(holder.profileImage);
         }
         //frågar databasen efter det senaste meddelandet i gruppen och sätter det i vyn
         db.collection("groups")
