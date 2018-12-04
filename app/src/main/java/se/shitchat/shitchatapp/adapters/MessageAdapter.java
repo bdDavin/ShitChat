@@ -45,7 +45,7 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
 
         //displays imageview if picture is sent
         if (model.getImage() != null && !Objects.equals(model.getImage(), "default")) {
-            Picasso.get().load(model.getImage()).into(hold.pictureView);
+            Picasso.get().load(model.getImage()).placeholder(R.drawable.ic_panorama_black_24dp).into(hold.pictureView);
 
             if (hold.pictureView.getDrawable() != null)
             hold.pictureView.setVisibility(View.VISIBLE);
@@ -56,16 +56,18 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
             hold.messageView.setVisibility(View.VISIBLE);
         }
 
-        hold.pictureView.setOnClickListener(this::viewImage);
+        hold.pictureView.setOnClickListener(v -> {
+
+            //show full image
+            ImageView fullScreen = v.findViewById(R.id.imageView_fullscreen);
+            if (fullScreen != null) {
+                fullScreen.setVisibility(View.VISIBLE);
+                Picasso.get().load(model.getImage()).into(fullScreen);
+            }
+        });
 
     }
 
-    private void viewImage(View v) {
-        //TODO fullscreen image
-        ImageView i = (ImageView) (v);
-
-        Log.i("image", "viewImage: " +i.getDrawable());
-    }
 
     @NonNull
     @Override

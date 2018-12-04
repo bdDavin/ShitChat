@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Objects;
 
 //shitchat
+import se.shitchat.shitchatapp.adapters.ChatRecyclerAdapter;
 import se.shitchat.shitchatapp.classes.Chat;
 import se.shitchat.shitchatapp.R;
 import se.shitchat.shitchatapp.SwipeToDeleteCallback;

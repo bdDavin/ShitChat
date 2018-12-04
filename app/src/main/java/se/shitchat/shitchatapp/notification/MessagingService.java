@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class MessagingService extends FirebaseMessagingService {
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Log.i("INCOMING", "INCOMING");
