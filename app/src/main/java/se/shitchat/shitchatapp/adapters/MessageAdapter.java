@@ -1,8 +1,8 @@
 package se.shitchat.shitchatapp.adapters;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +15,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
+import se.shitchat.shitchatapp.activitys.FullscreenActivity;
+import se.shitchat.shitchatapp.activitys.ProfileActivity;
 import se.shitchat.shitchatapp.classes.Message;
 import se.shitchat.shitchatapp.holders.MessageHolder;
 import se.shitchat.shitchatapp.R;
@@ -59,11 +61,15 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
         hold.pictureView.setOnClickListener(v -> {
 
             //show full image
-            ImageView fullScreen = v.findViewById(R.id.imageView_fullscreen);
-            if (fullScreen != null) {
+            
+            /*if (fullScreen != null) {
                 fullScreen.setVisibility(View.VISIBLE);
                 Picasso.get().load(model.getImage()).into(fullScreen);
-            }
+            }*/
+
+            Intent i = new Intent(v.getContext(), FullscreenActivity.class);
+            i.putExtra("image", model.getImage());
+            v.getContext().startActivity(i);
         });
 
     }

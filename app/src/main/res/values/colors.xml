@@ -6,4 +6,6 @@
     <color name="default_message_color_rcv">#d4d71d</color>
     <color name="default_bubble_color_send">#97d26e02</color>
     <color name="default_bubble_color_send_text">#ffffff</color>
+
+    <color name="black_overlay">#66000000</color>
 </resources>

@@ -428,7 +428,7 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        ImageView fullScreen = findViewById(R.id.imageView_fullscreen);
+        ImageView fullScreen = findViewById(R.id.fullscreen_imageView);
         if (fullScreen.getVisibility() == View.VISIBLE) {
             fullScreen.setVisibility(View.INVISIBLE);
         }
