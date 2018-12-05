@@ -22,16 +22,21 @@ import java.util.Set;
 import java.util.UUID;
 
 import dmax.dialog.SpotsDialog;
+import it.sephiroth.android.library.imagezoom.ImageViewTouch;
+import it.sephiroth.android.library.imagezoom.ImageViewTouchBase;
 import se.shitchat.shitchatapp.R;
 import se.shitchat.shitchatapp.SaveImageHelper;
 
 public class FullscreenActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 1000;
-    ImageView im;
+
     String url;
     private SaveImageHelper helper;
     final Set<Target> protectedFromGarbageCollectorTargets = new HashSet<>();
+    private ImageViewTouch imageView;
+    private ImageViewTouch im;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +48,11 @@ public class FullscreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_fullscreen);
 
 
-        ImageView im = findViewById(R.id.fullscreen_imageView);
+
+        //get view
+        im = (ImageViewTouch) (findViewById(R.id.fullscreen_imageView));
+
+        //get image
         url = getIntent().getStringExtra("image");
         Log.i("image", "onCreate: " +url);
 
@@ -63,8 +72,11 @@ public class FullscreenActivity extends AppCompatActivity {
         //load image
         Picasso.get().load(url).placeholder(R.drawable.ic_panorama_black_24dp).into(im);
 
+        // set the default image display type
+        im.setDisplayType(ImageViewTouchBase.DisplayType.FIT_TO_SCREEN);
+
         //download image
-        im.setOnClickListener(v -> imageDownload(v));
+        im.setOnLongClickListener(this::imageDownload);
     }
 
     @Override
@@ -87,7 +99,7 @@ public class FullscreenActivity extends AppCompatActivity {
     }
 
 
-    private void imageDownload(View v) {
+    private boolean imageDownload(View v) {
 
         //test for permission granted
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -96,7 +108,7 @@ public class FullscreenActivity extends AppCompatActivity {
 
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
             }, PERMISSION_REQUEST_CODE);
-            return;
+            return false;
         }
         else {
 
@@ -124,12 +136,8 @@ public class FullscreenActivity extends AppCompatActivity {
             //displays message
             Toast.makeText(this, "Saved image", Toast.LENGTH_SHORT).show();
 
-
-
-
         }
-
-
+        return false;
     }
 
 }

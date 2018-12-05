@@ -6,14 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".activitys.FullscreenActivity">
 
-    <ImageView
+    <it.sephiroth.android.library.imagezoom.ImageViewTouch
         android:id="@+id/fullscreen_imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/browser_actions_bg_grey"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@tools:sample/backgrounds/scenic[0]" />
+        tools:src="@tools:sample/avatars[1]" />
+
 </android.support.constraint.ConstraintLayout>
