@@ -61,13 +61,8 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
         hold.pictureView.setOnClickListener(v -> {
 
             //show full image
-
-            /*if (fullScreen != null) {
-                fullScreen.setVisibility(View.VISIBLE);
-                Picasso.get().load(model.getImage()).into(fullScreen);
-            }*/
-
             Intent i = new Intent(v.getContext(), FullscreenActivity.class);
+            //image url
             i.putExtra("image", model.getImage());
             v.getContext().startActivity(i);
         });

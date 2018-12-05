@@ -1,38 +1,42 @@
 package se.shitchat.shitchatapp.activitys;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.Environment;
-import android.provider.MediaStore;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
+import dmax.dialog.SpotsDialog;
 import se.shitchat.shitchatapp.R;
+import se.shitchat.shitchatapp.SaveImageHelper;
 
 public class FullscreenActivity extends AppCompatActivity {
+
+    private static final int PERMISSION_REQUEST_CODE = 1000;
+    ImageView im;
+    String url;
+    private SaveImageHelper helper;
+    final Set<Target> protectedFromGarbageCollectorTargets = new HashSet<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_fullscreen);
-
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -40,11 +44,19 @@ public class FullscreenActivity extends AppCompatActivity {
 
 
         ImageView im = findViewById(R.id.fullscreen_imageView);
-        String url = getIntent().getStringExtra("image");
+        url = getIntent().getStringExtra("image");
+        Log.i("image", "onCreate: " +url);
 
         //test for null exception
         if (url == null || im == null) {
                 finish();
+        }
+
+        if (ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{
+
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+            }, PERMISSION_REQUEST_CODE);
         }
 
 
@@ -52,94 +64,72 @@ public class FullscreenActivity extends AppCompatActivity {
         Picasso.get().load(url).placeholder(R.drawable.ic_panorama_black_24dp).into(im);
 
         //download image
-        im.setOnClickListener(v -> test((ImageView) (v)));
+        im.setOnClickListener(v -> imageDownload(v));
     }
 
-    /*private void downloadImage(ImageView v) {
-        //to get the image from the ImageView (say iv)
-        BitmapDrawable draw = (BitmapDrawable) v.getDrawable();
-        Bitmap bitmap = draw.getBitmap();
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        FileOutputStream outStream = null;
-        File sdCard = Environment.getExternalStorageDirectory();
-        File dir = new File(sdCard.getAbsolutePath() + "/SuperChat");
-        dir.mkdirs();
-        String fileName = String.format("%d.jpg", System.currentTimeMillis());
-        File outFile = new File(dir, fileName);
-        outStream = new FileOutputStream(outFile);
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
-        outStream.flush();
-        outStream.close();
-    }*/
-    private void test(ImageView v) {
-        mDownloadAndSave();
-    }
-
-
-    private void downlodImage(ImageView v) {
-        // Get the image from drawable resource as drawable object
-        Drawable drawable = v.getDrawable();
-
-        // Get the bitmap from drawable object
-        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-
-
-
-
-        // Save image to gallery
-        String savedImageURL = MediaStore.Images.Media.insertImage(
-                getContentResolver(),
-                bitmap,
-                "Bird",
-                "Image of bird");
-
-        Intent mediaScanIntent = new Intent( Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-
-        Uri uri = Uri.parse(savedImageURL);
-        mediaScanIntent.setData(uri);
-        sendBroadcast(mediaScanIntent);
-    }
-
-    public void mDownloadAndSave() {
-        // Setting up file to write the image to.
-        File f = new File("/mnt/sdcard/img.png");
-
-        // Open InputStream to download the image.
-        InputStream is;
-        try {
-            is = new URL("http://www.tmonews.com/wp-content/uploads/2012/10/androidfigure.jpg").openStream();
-
-            // Set up OutputStream to write data into image file.
-            OutputStream os = new FileOutputStream(f);
-
-            CopyStream(is, os);
-        } catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        Intent mediaScanIntent = new Intent( Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-
-        //Uri uri = Uri.parse(savedImageURL);
-        //mediaScanIntent.setData(uri);
-        //sendBroadcast(mediaScanIntent);
-    }
-
-    public static void CopyStream(InputStream is, OutputStream os) {
-        final int buffer_size = 1024;
-        try {
-            byte[] bytes = new byte[buffer_size];
-            for (;;) {
-                int count = is.read(bytes, 0, buffer_size);
-                if (count == -1)
-                    break;
-                os.write(bytes, 0, count);
+        switch (requestCode)
+        {
+            case PERMISSION_REQUEST_CODE:
+            {
+                if (grantResults.length > 0 && grantResults[0]== PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "PERMISSION GRANTED", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(this, "PERMISSION DENIED", Toast.LENGTH_SHORT).show();
+                }
             }
-        } catch (Exception ex) {
-
+            break;
         }
     }
+
+
+    private void imageDownload(View v) {
+
+        //test for permission granted
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "You should grant permission", Toast.LENGTH_SHORT).show();
+            requestPermissions(new String[]{
+
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+            }, PERMISSION_REQUEST_CODE);
+            return;
+        }
+        else {
+
+            //shows message
+            AlertDialog dialog = new SpotsDialog(FullscreenActivity.this);
+            dialog.show();
+            dialog.setMessage("Downloading...");
+
+
+            Log.i("image", "onBitmapLoaded: 3");
+            //creates unique id
+            String fileName = UUID.randomUUID().toString() + ".jpg";
+
+
+            //creates helper object
+            helper = new SaveImageHelper(getBaseContext(),
+                    dialog,
+                    getApplicationContext().getContentResolver(),
+                    fileName, "Image Description" );
+            //protectedFromGarbageCollectorTargets.add(helper);
+
+            //upload image
+            Picasso.get().load(url)
+                   .into(helper);
+            //displays message
+            Toast.makeText(this, "Saved image", Toast.LENGTH_SHORT).show();
+
+
+
+
+        }
+
+
+    }
+
 }

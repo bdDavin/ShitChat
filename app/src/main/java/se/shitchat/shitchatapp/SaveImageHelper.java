@@ -1,4 +1,4 @@
-package se.shitchat.shitchatapp.activitys;
+package se.shitchat.shitchatapp;
 
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -34,17 +35,13 @@ public class SaveImageHelper implements Target {
         ContentResolver r = contentResolverWeakReference.get();
         AlertDialog dialog = alertDialogWeakReference.get();
 
-        if(r != null)
+        if(r != null) {
             MediaStore.Images.Media.insertImage(r, bitmap, name, desc);
+
+        }
+
+        dialog.setMessage("Completed");
         dialog.dismiss();
-
-        //open gallery after download
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        context.startActivity(Intent.createChooser(intent, "VIEW PICTURE"));
-
-
     }
 
     @Override
