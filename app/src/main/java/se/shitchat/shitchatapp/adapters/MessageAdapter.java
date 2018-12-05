@@ -1,15 +1,20 @@
 package se.shitchat.shitchatapp.adapters;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -17,8 +22,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
+import java.util.UUID;
 
 import dmax.dialog.SpotsDialog;
+import se.shitchat.shitchatapp.SaveImageHelper;
 import se.shitchat.shitchatapp.activitys.FullscreenActivity;
 import se.shitchat.shitchatapp.activitys.MessageActivity;
 import se.shitchat.shitchatapp.activitys.ProfileActivity;
@@ -31,6 +38,7 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
 
     private static final int VIEW_TYPE_ME = 1;
     private static final int VIEW_TYPE_OTHER = 2;
+    private static final int PERMISSION_REQUEST_CODE = 1000;
 
 
 
@@ -72,34 +80,71 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
             v.getContext().startActivity(i);
         });
 
-        hold.pictureView.setOnLongClickListener(this::downloadImage);
+        hold.pictureView.setOnLongClickListener(view -> {
+
+            //test for permission granted
+            if (ActivityCompat.checkSelfPermission(view.getContext().getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(view.getContext(), "You should grant permission", Toast.LENGTH_SHORT).show();
+
+                ActivityCompat.requestPermissions((Activity) (view.getContext()),
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MessageActivity.PERMISSION_REQUEST_CODE);
+
+            }
+            else {
+
+                //build dialog box
+                AlertDialog.Builder download = new AlertDialog.Builder(view.getContext(), R.style.LightDialogTheme);
+                download.setMessage("Do you want to download this image?")
+                        .setCancelable(false)
+
+                        //on click listener
+                        .setPositiveButton("Yes", (dialog, which) -> {
+
+                            //download image
+
+                            //shows message
+                            AlertDialog dialog2 = new SpotsDialog(view.getContext());
+                            dialog2.show();
+                            dialog2.setMessage("Downloading...");
+
+
+                            Log.i("image", "onBitmapLoaded: 3");
+                            //creates unique id
+                            String fileName = UUID.randomUUID().toString() + ".jpg";
+
+
+                            //creates helper object
+                            SaveImageHelper helper = new SaveImageHelper(view.getContext(),
+                                    dialog2,
+                                    view.getContext().getApplicationContext().getContentResolver(),
+                                    fileName, "Image Description");
+                            //protectedFromGarbageCollectorTargets.add(helper);
+
+                            //upload image
+                            Picasso.get().load(model.getImage())
+                                    .into(helper);
+                            //displays message
+                            Toast.makeText(view.getContext(), "Saved image", Toast.LENGTH_SHORT).show();
+
+
+                        })
+                        //onclick listener
+                        .setNegativeButton("No", (dialog, which) -> {
+                            dialog.cancel();
+                        });
+
+                //show download dialog
+                AlertDialog downloadDialog = download.create();
+                downloadDialog.setTitle("Download Image");
+                downloadDialog.show();
+            }
+            return true;
+        });
 
     }
 
-    private boolean downloadImage(View view) {
-
-        AlertDialog.Builder download = new AlertDialog.Builder(view.getContext(), R.style.LightDialogTheme);
-        download.setMessage("Do you want to download this image?")
-                .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.i("image", "onClick: yes");
-                        dialog.cancel();
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.i("image", "onClick: no");
-                        dialog.cancel();
-                    }
-                });
-        AlertDialog downloadDialog = download.create();
-        downloadDialog.setTitle("Download Image");
-        downloadDialog.show();
-        return true;
-    }
+    //private boolean downloadImage(View view)
 
 
     @NonNull

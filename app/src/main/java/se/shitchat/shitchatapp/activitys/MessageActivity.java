@@ -1,10 +1,15 @@
 package se.shitchat.shitchatapp.activitys;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +23,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -30,10 +36,14 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.UUID;
 
+import dmax.dialog.SpotsDialog;
+import se.shitchat.shitchatapp.SaveImageHelper;
 import se.shitchat.shitchatapp.classes.Message;
 import se.shitchat.shitchatapp.R;
 import se.shitchat.shitchatapp.adapters.MessageAdapter;
@@ -53,6 +63,8 @@ public class MessageActivity extends AppCompatActivity {
     private String groupId = "kemywcCWdHKO5ESZpSZn";
     private boolean ImActive;
     private FirebaseAuth mAuth;
+
+    public static final int PERMISSION_REQUEST_CODE = 1000;
 
 
 
@@ -290,13 +302,27 @@ public class MessageActivity extends AppCompatActivity {
     /************************** Sending picture  ************/
     private static final int REQUEST_IMAGE_GALLERY = 1337;
 
-    private void openGallery() {
-        //open gallery
-        Intent i = new Intent(
-                Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
-         startActivityForResult(i, REQUEST_IMAGE_GALLERY);
+
+    private void openGallery() {
+
+        //test for permission granted
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(getBaseContext(), "You should grant permission", Toast.LENGTH_SHORT).show();
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MessageActivity.PERMISSION_REQUEST_CODE);
+
+        }
+        else {
+            //open gallery
+            Intent i = new Intent(
+                    Intent.ACTION_PICK,
+                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+            startActivityForResult(i, REQUEST_IMAGE_GALLERY);
+        }
     }
 
 
