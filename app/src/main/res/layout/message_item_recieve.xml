@@ -58,6 +58,7 @@
                 android:textColor="@color/common_google_signin_btn_text_dark_focused"
                 android:textSize="@dimen/default_message_text_size"
                 android:visibility="gone"
+                android:autoLink="web"
                 tools:text="My name is Timi and I am..." />
 
             <android.support.v4.widget.Space
