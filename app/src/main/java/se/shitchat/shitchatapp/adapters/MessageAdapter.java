@@ -1,8 +1,11 @@
 package se.shitchat.shitchatapp.adapters;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +18,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
+import dmax.dialog.SpotsDialog;
 import se.shitchat.shitchatapp.activitys.FullscreenActivity;
+import se.shitchat.shitchatapp.activitys.MessageActivity;
 import se.shitchat.shitchatapp.activitys.ProfileActivity;
 import se.shitchat.shitchatapp.classes.Message;
 import se.shitchat.shitchatapp.holders.MessageHolder;
@@ -67,6 +72,33 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
             v.getContext().startActivity(i);
         });
 
+        hold.pictureView.setOnLongClickListener(this::downloadImage);
+
+    }
+
+    private boolean downloadImage(View view) {
+
+        AlertDialog.Builder download = new AlertDialog.Builder(view.getContext(), R.style.LightDialogTheme);
+        download.setMessage("Do you want to download this image?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.i("image", "onClick: yes");
+                        dialog.cancel();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.i("image", "onClick: no");
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog downloadDialog = download.create();
+        downloadDialog.setTitle("Download Image");
+        downloadDialog.show();
+        return true;
     }
 
 
