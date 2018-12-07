@@ -57,7 +57,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical|start"
-                android:textColor="@color/colorAccent"
+                android:textColor="@android:color/white"
                 android:textSize="@dimen/default_message_text_size"
                 android:visibility="gone"
                 android:autoLink="web"
@@ -72,7 +72,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical|start"
-                android:textColor="@color/colorAccent"
+                android:textColor="@android:color/white"
                 android:textSize="12sp"
                 tools:text="12:10 am" />
 
