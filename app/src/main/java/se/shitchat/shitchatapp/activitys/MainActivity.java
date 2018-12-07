@@ -10,11 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -24,24 +22,19 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
-//shitchat
-import dmax.dialog.SpotsDialog;
-import se.shitchat.shitchatapp.SaveImageHelper;
-import se.shitchat.shitchatapp.adapters.ChatRecyclerAdapter;
-import se.shitchat.shitchatapp.classes.Chat;
 import se.shitchat.shitchatapp.R;
 import se.shitchat.shitchatapp.SwipeToDeleteCallback;
 import se.shitchat.shitchatapp.adapters.ChatRecyclerAdapter;
 import se.shitchat.shitchatapp.classes.Chat;
 import se.shitchat.shitchatapp.classes.User;
 import se.shitchat.shitchatapp.holders.ChatsViewHolder;
+
+//shitchat
 
 //firebase
 //shitchat
