@@ -43,6 +43,8 @@ public class GroupProfileActivity extends AppCompatActivity {
 
         Toolbar t = findViewById(R.id.groupProfileToolbar);
         setSupportActionBar(t);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.chat_settings);
+
         groupName = findViewById(R.id.groupNameText);
         groupImage = findViewById(R.id.groupProfile_image);
         groupImage.setOnClickListener(v -> changeProfileImage());

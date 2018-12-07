@@ -98,9 +98,14 @@ public class MainActivity extends AppCompatActivity {
         chatsRecyclerView.setHasFixedSize(true);
         chatsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         //Skapar adaptern
-        adapter = new ChatRecyclerAdapter(options) ;
+        adapter = new ChatRecyclerAdapter(options);
 
         chatsRecyclerView.setAdapter(adapter);
+
+        // recyclerview start updating
+        if (adapter != null) {
+            adapter.startListening();
+        }
     }
 
     private void swipeToDelete() {
@@ -108,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
         SwipeToDeleteCallback swipeHandler = new SwipeToDeleteCallback(this) {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                //adapter.removeItem(viewHolder.getAdapterPosition());
                 String adapterPosId = adapter.getSnapshots().getSnapshot(viewHolder.getAdapterPosition()).getId();
                 db.collection("groups")
                         .document(adapterPosId)
@@ -157,7 +161,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             userUid = mAuth.getCurrentUser().getUid();
             initRecycler();
-            showSignedInSnack();
         }
     }
 
@@ -168,24 +171,32 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
-                //Skapar en User.class instans
-                User user = new User();
-                user.setEmail(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail());
-                user.setUsername(mAuth.getCurrentUser().getDisplayName());
-                user.setImage("default");
-                // Sparar användaren i databasen med Uid
-                String userUid = mAuth.getCurrentUser().getUid();
+                userUid = mAuth.getCurrentUser().getUid();
                 db.collection("users")
                         .document(userUid)
-                        .set(user);
+                        .get()
+                        .addOnFailureListener(e -> {
+                            //Skapar en User.class instans
+                            User user = new User();
+                            user.setEmail(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail());
+                            user.setUsername(mAuth.getCurrentUser().getDisplayName());
+                            user.setImage("default");
+                            // Sparar användaren i databasen med Uid
 
-                FirebaseInstanceId.getInstance().getInstanceId()
-                        .addOnSuccessListener(instanceIdResult -> db.collection("users")
-                                .document(mAuth.getCurrentUser().getUid())
-                                .update("deviceToken", instanceIdResult.getToken())
-                                .addOnSuccessListener(aVoid -> showSignedInSnack()));
+                            db.collection("users")
+                                    .document(userUid)
+                                    .set(user);
+
+                            FirebaseInstanceId.getInstance().getInstanceId()
+                                    .addOnSuccessListener(instanceIdResult -> db.collection("users")
+                                            .document(userUid)
+                                            .update("deviceToken", instanceIdResult.getToken())
+                                            .addOnSuccessListener(aVoid -> showSignedInSnack()));
+                        });
+                initRecycler();
             } else {
                 showLoginFailedSnack();
+                createLogInScreen();
             }
         }
     }
@@ -221,9 +232,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void logOut(MenuItem item) {
+
+        //stops recyclerview from updating
+        if (adapter != null) {
+            adapter.stopListening();
+        }
         mAuth.signOut();
         createLogInScreen();
     }
-
-
 }
