@@ -35,6 +35,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         Toolbar t = findViewById(R.id.profileToolbar);
         setSupportActionBar(t);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.profile);
+
         TextView userName = findViewById(R.id.usernameText);
         userImage = findViewById(R.id.profile_image);
         userImage.setOnClickListener(v -> changeProfileImage());

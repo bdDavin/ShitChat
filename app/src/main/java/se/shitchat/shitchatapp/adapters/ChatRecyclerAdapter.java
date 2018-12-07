@@ -1,6 +1,7 @@
 package se.shitchat.shitchatapp.adapters;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -107,7 +108,8 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chat, ChatsVie
             i.putExtra("groupId", groupId);
             i.putExtra("groupName", holder.chatsUsername.getText());
             v.getContext().startActivity(i);
-            //overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            Activity a = (Activity) v.getContext();
+            a.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
     }
 

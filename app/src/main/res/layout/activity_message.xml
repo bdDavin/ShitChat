@@ -16,10 +16,10 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:onClick="addImagePressed"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageButton"
-        app:layout_constraintTop_toTopOf="@+id/message_edit"
-        android:visibility="invisible"
+        app:layout_constraintTop_toBottomOf="@+id/divider"
         app:srcCompat="@drawable/cameraicon"
         tools:srcCompat="@drawable/cameraicon" />
 
@@ -38,13 +38,11 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="62dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/divider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messageToolbar"
-        app:layout_constraintVertical_bias="0.0"
         tools:listitem="@layout/message_item" />
 
 
@@ -52,15 +50,10 @@
         android:id="@+id/send_button"
         android:layout_width="55dp"
         android:layout_height="55dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
         android:src="@drawable/sendicon"
         android:text="@string/send_Button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/message_edit"
-        app:layout_constraintVertical_bias="0.8"
         tools:src="@drawable/sendicon" />
 
     <EditText
@@ -78,8 +71,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/send_button"
         app:layout_constraintStart_toEndOf="@+id/imageButton2"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView"
-        app:layout_constraintVertical_bias="0.444" />
+        app:layout_constraintTop_toBottomOf="@+id/divider" />
 
     <ImageButton
         android:id="@+id/imageButton"
@@ -92,7 +84,7 @@
         android:onClick="addImagePressed"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/message_edit"
+        app:layout_constraintTop_toBottomOf="@+id/divider"
         app:srcCompat="@drawable/image"
         tools:srcCompat="@drawable/image" />
 
@@ -100,11 +92,22 @@
         android:id="@+id/image_view_active"
         android:layout_width="60dp"
         android:layout_height="30dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="108dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/message_edit"
+        app:layout_constraintBottom_toBottomOf="@+id/recyclerView"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/typingicon"
         tools:srcCompat="@drawable/typingicon" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toTopOf="@+id/send_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </android.support.constraint.ConstraintLayout>
