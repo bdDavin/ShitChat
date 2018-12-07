@@ -133,6 +133,7 @@ public class MessageActivity extends AppCompatActivity {
             Log.i("display", "Document has been updated");
             //recieves value from fire store
             Boolean serverValue = Objects.requireNonNull(documentSnapshot).getBoolean("active");
+            groupIsActive = serverValue;
             Log.i("display", "servervalue is: " +serverValue);
 
 
@@ -282,9 +283,12 @@ public class MessageActivity extends AppCompatActivity {
         });
     }
 
-
+    private Boolean groupIsActive;
     private void displayTyping() {
-        Boolean groupIsActive = false;
+        if (groupIsActive == null) {
+            return;
+        }
+
         Log.i("display", "displayTyping: im: " +ImActive +" group is: " + groupIsActive);
         if (!ImActive && groupIsActive) {
             Log.i("display", "buble is VISIBLE");
@@ -293,7 +297,7 @@ public class MessageActivity extends AppCompatActivity {
         }
         else {
             Log.i("display", "buble is GONE");
-            inputIndicator.setVisibility(View.GONE);
+            inputIndicator.setVisibility(View.INVISIBLE);
 
         }
     }

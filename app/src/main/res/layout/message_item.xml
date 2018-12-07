@@ -58,6 +58,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical|start"
                 android:textColor="@color/colorAccent"
+                android:autoLink="all"
                 android:textSize="@dimen/default_message_text_size"
                 android:visibility="gone"
                 tools:text="My name is Timi and I am not a god." />
