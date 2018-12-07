@@ -39,10 +39,13 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/divider"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/image_view_active"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messageToolbar"
+        app:layout_constraintVertical_bias="0.0"
         tools:listitem="@layout/message_item" />
 
 
@@ -50,10 +53,15 @@
         android:id="@+id/send_button"
         android:layout_width="55dp"
         android:layout_height="55dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:src="@drawable/sendicon"
         android:text="@string/send_Button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/message_edit"
+        app:layout_constraintVertical_bias="0.8"
         tools:src="@drawable/sendicon" />
 
     <EditText
