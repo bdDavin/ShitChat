@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,10 +31,12 @@ import se.shitchat.shitchatapp.holders.ChatsViewHolder;
 public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chat, ChatsViewHolder> {
 
     private Context context;
+    private RecyclerView recyclerView;
 
-    public ChatRecyclerAdapter(@NonNull FirestoreRecyclerOptions<Chat> options, Context c) {
+    public ChatRecyclerAdapter(@NonNull FirestoreRecyclerOptions<Chat> options, Context c, RecyclerView rv) {
         super(options);
         context = c;
+        recyclerView = rv;
     }
 
 
@@ -136,6 +139,11 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chat, ChatsVie
     public ChatsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_chats, viewGroup, false);
         return new ChatsViewHolder(view);
+    }
+
+    @Override
+    public void onDataChanged() {
+        Objects.requireNonNull(recyclerView.getLayoutManager()).smoothScrollToPosition(recyclerView, null,0);
     }
 }
 

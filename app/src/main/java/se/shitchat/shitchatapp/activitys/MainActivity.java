@@ -100,16 +100,8 @@ public class MainActivity extends AppCompatActivity {
         chatsRecyclerView.setHasFixedSize(true);
         chatsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         //Skapar adaptern
-        adapter = new ChatRecyclerAdapter(options, getApplicationContext());
+        adapter = new ChatRecyclerAdapter(options, getApplicationContext(), chatsRecyclerView);
         chatsRecyclerView.setAdapter(adapter);
-
-        //Scroll to top on new message
-        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                Objects.requireNonNull(chatsRecyclerView.getLayoutManager()).smoothScrollToPosition(chatsRecyclerView, null, 0);
-            }
-        });
 
         // recyclerview start updating
         if (adapter != null) {
