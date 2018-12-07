@@ -5,8 +5,6 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -17,11 +15,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
-import com.squareup.picasso.Picasso;
 
-import se.shitchat.shitchatapp.classes.Chat;
-import se.shitchat.shitchatapp.activitys.MessageActivity;
 import se.shitchat.shitchatapp.R;
+import se.shitchat.shitchatapp.activitys.MessageActivity;
+import se.shitchat.shitchatapp.classes.Chat;
 import se.shitchat.shitchatapp.classes.User;
 import se.shitchat.shitchatapp.holders.SearchHolder;
 
@@ -91,7 +88,6 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchHolder> 
                 String friendId = getSnapshots().getSnapshot(position).getId();
                 String friendname = model.getUsername();
                 chat.addUser(friendname, friendId);
-
 
                 db.collection("groups").add(chat).addOnCompleteListener(task -> {
                     DocumentReference document = task.getResult();

@@ -1,8 +1,6 @@
 package se.shitchat.shitchatapp.activitys;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -36,17 +34,15 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
-import dmax.dialog.SpotsDialog;
-import se.shitchat.shitchatapp.SaveImageHelper;
-import se.shitchat.shitchatapp.classes.Message;
 import se.shitchat.shitchatapp.R;
 import se.shitchat.shitchatapp.adapters.MessageAdapter;
+import se.shitchat.shitchatapp.classes.Message;
 
 
 public class MessageActivity extends AppCompatActivity {
@@ -410,6 +406,25 @@ public class MessageActivity extends AppCompatActivity {
 
         //update the timing on group
         db.collection("groups").document(groupId).update("lastUpdated", message.getCreationDate());
+
+        db.collection("groups")
+                .document(groupId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    DocumentSnapshot document = task.getResult();
+                    ArrayList<String> usersUids = (ArrayList<String>) document.get("userId");
+                    HashMap m = new HashMap();
+                    m.put("array", false);
+                    for (int i = 0; i < usersUids.size(); i++) {
+                        if (!usersUids.get(i).equals(uid)){
+
+                        }
+                    }
+
+                    db.collection("groups")
+                            .document(groupId)
+                            .set()
+                });
 
 
     }
