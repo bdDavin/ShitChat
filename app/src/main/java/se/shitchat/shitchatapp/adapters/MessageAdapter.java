@@ -3,7 +3,6 @@ package se.shitchat.shitchatapp.adapters;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -13,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -25,13 +23,12 @@ import java.util.Objects;
 import java.util.UUID;
 
 import dmax.dialog.SpotsDialog;
+import se.shitchat.shitchatapp.R;
 import se.shitchat.shitchatapp.SaveImageHelper;
 import se.shitchat.shitchatapp.activitys.FullscreenActivity;
 import se.shitchat.shitchatapp.activitys.MessageActivity;
-import se.shitchat.shitchatapp.activitys.ProfileActivity;
 import se.shitchat.shitchatapp.classes.Message;
 import se.shitchat.shitchatapp.holders.MessageHolder;
-import se.shitchat.shitchatapp.R;
 
 
 public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder> {
@@ -39,12 +36,13 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
     private static final int VIEW_TYPE_ME = 1;
     private static final int VIEW_TYPE_OTHER = 2;
     private static final int PERMISSION_REQUEST_CODE = 1000;
+    private MessageActivity activity;
 
 
 
-
-    public MessageAdapter(FirestoreRecyclerOptions options) {
+    public MessageAdapter(FirestoreRecyclerOptions options, MessageActivity a) {
         super(options);
+        activity = a;
     }
 
 
@@ -172,7 +170,10 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<Message, RecyclerVi
         return viewHolder;
     }
 
-
+    @Override
+    public void onDataChanged() {
+        activity.updateSeenStatus();
+    }
 
     @Override
     public int getItemViewType(int position) {

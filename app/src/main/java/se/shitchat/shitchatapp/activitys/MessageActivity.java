@@ -36,8 +36,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import se.shitchat.shitchatapp.R;
@@ -73,7 +71,6 @@ public class MessageActivity extends AppCompatActivity {
         Intent intent = getIntent();
         groupId = intent.getStringExtra("groupId");
         String groupName = intent.getStringExtra("groupName");
-
 
 
         initialization();
@@ -118,10 +115,11 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-
-
         //change toolbar to groupname
         setToolbarName();
+
+        //Update Has Seen Status
+        updateSeenStatus();
 
         //test for document change
         db.collection("groups").document(groupId).addSnapshotListener((documentSnapshot, e) -> {
@@ -137,6 +135,12 @@ public class MessageActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    public void updateSeenStatus(){
+        db.collection("groups")
+                .document(groupId)
+                .update(mAuth.getCurrentUser().getUid()+"HasSeen", "true");
     }
 
     private void setToolbarName() {
@@ -184,7 +188,7 @@ public class MessageActivity extends AppCompatActivity {
                 .build();
 
         //creates adapter from firestore to message bubbles
-        adapter = new MessageAdapter(options);
+        adapter = new MessageAdapter(options, this);
 
         //sets settings for recycler
         messageRecycler.setHasFixedSize(true);
@@ -412,20 +416,16 @@ public class MessageActivity extends AppCompatActivity {
                 .get()
                 .addOnCompleteListener(task -> {
                     DocumentSnapshot document = task.getResult();
-                    ArrayList<String> usersUids = (ArrayList<String>) document.get("userId");
-                    HashMap m = new HashMap();
-                    m.put("array", false);
-                    for (int i = 0; i < usersUids.size(); i++) {
-                        if (!usersUids.get(i).equals(uid)){
+                    ArrayList<String> userUids = (ArrayList<String>) document.get("userId");
 
+                    for (String userUid:userUids) {
+                        if (!userUid.equals(uid)){
+                            db.collection("groups")
+                                    .document(groupId)
+                                    .update(userUid+"HasSeen", "false");
                         }
                     }
-
-                    db.collection("groups")
-                            .document(groupId)
-                            .set()
                 });
-
 
     }
 

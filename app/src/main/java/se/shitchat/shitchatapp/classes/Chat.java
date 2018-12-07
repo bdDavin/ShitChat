@@ -16,7 +16,6 @@ public class Chat {
     private ArrayList messages;
     private ArrayList<String> userId;
     private ArrayList<String> userNames;
-    private ArrayList<Boolean> userHasSeen;
     private String lastUpdated;
 
     public String getLastUpdated() {
@@ -32,7 +31,6 @@ public class Chat {
         this.name = name;
         userId = new ArrayList<>();
         userNames = new ArrayList<>();
-        userHasSeen = new ArrayList<>();
         image = "default";
 
         DateFormat dateFormat = DateFormat.getDateInstance();
@@ -68,14 +66,9 @@ public class Chat {
         this.userNames.add(userName);
     }
 
-    private void addUserSeen() {
-        this.userHasSeen.add(true);
-    }
-
     public void addUser(String userName, String userID) {
        addUserId(userID);
        addUserName(userName);
-       addUserSeen();
     }
 
     public ArrayList<String> getUserId() {
@@ -92,13 +85,5 @@ public class Chat {
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public ArrayList<Boolean> getUserHasSeen() {
-        return userHasSeen;
-    }
-
-    public void setUserHasSeen(ArrayList<Boolean> userHasSeen) {
-        this.userHasSeen = userHasSeen;
     }
 }

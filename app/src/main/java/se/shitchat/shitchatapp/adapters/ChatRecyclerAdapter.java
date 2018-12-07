@@ -2,8 +2,11 @@ package se.shitchat.shitchatapp.adapters;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +14,7 @@ import android.view.ViewGroup;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.squareup.picasso.Picasso;
@@ -18,27 +22,23 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import se.shitchat.shitchatapp.activitys.MessageActivity;
-import se.shitchat.shitchatapp.classes.Chat;
 import se.shitchat.shitchatapp.R;
 import se.shitchat.shitchatapp.activitys.MessageActivity;
 import se.shitchat.shitchatapp.classes.Chat;
 import se.shitchat.shitchatapp.holders.ChatsViewHolder;
 
-import static com.firebase.ui.auth.AuthUI.getApplicationContext;
-
 public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chat, ChatsViewHolder> {
 
+    private Context context;
 
-
-    public ChatRecyclerAdapter(@NonNull FirestoreRecyclerOptions<Chat> options) {
+    public ChatRecyclerAdapter(@NonNull FirestoreRecyclerOptions<Chat> options, Context c) {
         super(options);
+        context = c;
     }
 
 
     @Override
     protected void onBindViewHolder(@NonNull ChatsViewHolder holder, int position, @NonNull Chat chatModel) {
-
          FirebaseAuth mAuth = FirebaseAuth.getInstance();
          FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -111,6 +111,24 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chat, ChatsVie
             Activity a = (Activity) v.getContext();
             a.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
+        db.collection("groups")
+                .document(groupId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    DocumentSnapshot document = task.getResult();
+                    String answer = document.getString(mAuth.getCurrentUser().getUid()+"HasSeen");
+                    if ("false".equals(answer)){
+                        holder.chatsUsername.setTypeface(null, Typeface.BOLD);
+                        holder.lastMessage.setTypeface(null, Typeface.BOLD);
+                        holder.date.setTypeface(null, Typeface.BOLD);
+                        holder.chatsUsername.setTextColor(context.getColor(R.color.colorPrimary));
+                        holder.lastMessage.setTextColor(context.getColor(R.color.colorPrimary));
+                        holder.date.setTextColor(context.getColor(R.color.colorPrimary));
+                    }
+                });
+        Log.d("hej", "position "+ position);
+        Log.d("hej", "item "+holder.chatsUsername.getText());
+        Log.d("hej", "seen "+holder.chatsUsername.getCurrentTextColor());
     }
 
     @NonNull
