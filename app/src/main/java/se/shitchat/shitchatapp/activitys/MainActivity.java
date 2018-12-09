@@ -6,13 +6,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -157,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
     private void createLogInScreen() {
 
         if (mAuth.getCurrentUser() == null) {
+            Log.d("hej", "createLogInScreen: user = null");
             //inloggs alternativ
             List<AuthUI.IdpConfig> providers = Arrays.asList(
                     new AuthUI.IdpConfig.GoogleBuilder().build(),
@@ -176,43 +177,52 @@ public class MainActivity extends AppCompatActivity {
         } else {
             userUid = mAuth.getCurrentUser().getUid();
             initRecycler();
+            Log.d("hej", "createLogInScreen: user " + userUid);
         }
     }
 
     @Override //Kollar om man inlogg gick igenom
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("hej", "onActivityResult: start");
+        if (requestCode == RC_SIGN_IN && resultCode == RESULT_OK) {
+            // Successfully signed in
+            //updating auth instance
+            mAuth = FirebaseAuth.getInstance();
+            userUid = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
+            Log.d("hej", "onActivityResult: user: " + userUid);
 
-        if (requestCode == RC_SIGN_IN) {
-            if (resultCode == RESULT_OK) {
-                // Successfully signed in
-                userUid = mAuth.getCurrentUser().getUid();
-                db.collection("users")
-                        .document(userUid)
-                        .get()
-                        .addOnFailureListener(e -> {
+            //Checks if user exists in database
+            db.collection("users")
+                    .document(userUid)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        DocumentSnapshot document = task.getResult();
+                        if (!document.exists()) {
+                            Log.d("hej", "onActivityResult: fail ");
                             //Skapar en User.class instans
                             User user = new User();
                             user.setEmail(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail());
                             user.setUsername(mAuth.getCurrentUser().getDisplayName());
                             user.setImage("default");
-                            // Sparar användaren i databasen med Uid
 
+                            // Sparar användaren i databasen med Uid
                             db.collection("users")
                                     .document(userUid)
                                     .set(user);
-
-                            FirebaseInstanceId.getInstance().getInstanceId()
-                                    .addOnSuccessListener(instanceIdResult -> db.collection("users")
-                                            .document(userUid)
-                                            .update("deviceToken", instanceIdResult.getToken())
-                                            .addOnSuccessListener(aVoid -> showSignedInSnack()));
-                        });
-                initRecycler();
-            } else {
-                showLoginFailedSnack();
-                createLogInScreen();
-            }
+                        }
+                        FirebaseInstanceId.getInstance().getInstanceId()
+                                .addOnSuccessListener(instanceIdResult -> db.collection("users")
+                                        .document(userUid)
+                                        .update("deviceToken", instanceIdResult.getToken())
+                                        .addOnCompleteListener(task1 -> Log.d("hej", "onActivityResult: update complete")));
+                    });
+            showSignedInSnack();
+            Log.d("hej", "onActivityResult: initRecycler");
+            initRecycler();
+        } else {
+            showLoginFailedSnack();
+            createLogInScreen();
         }
     }
 
@@ -248,31 +258,31 @@ public class MainActivity extends AppCompatActivity {
 
     public void logOut(MenuItem item) {
 
-            //build dialog box
-            AlertDialog.Builder logoutBuilder = new AlertDialog.Builder(this, R.style.LightDialogTheme);
-            logoutBuilder.setMessage("Do you want to logout?")
-                    .setCancelable(false)
+        //build dialog box
+        AlertDialog.Builder logoutBuilder = new AlertDialog.Builder(this, R.style.LightDialogTheme);
+        logoutBuilder.setMessage("Do you want to logout?")
+                .setCancelable(false)
 
-                    //on click listener
-                    .setPositiveButton("Yes", (dialog, which) -> {
-                        //stops recyclerview from updating
-                        if (adapter != null) {
-                            adapter.stopListening();
-                        }
-                        //logout
-                        mAuth.signOut();
-                        createLogInScreen();
+                //on click listener
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    //stops recyclerview from updating
+                    if (adapter != null) {
+                        adapter.stopListening();
+                    }
+                    //logout
+                    mAuth.signOut();
+                    createLogInScreen();
 
-                    })
-                    //onclick listener
-                    .setNegativeButton("No", (dialog, which) -> {
+                })
+                //onclick listener
+                .setNegativeButton("No", (dialog, which) -> {
 
-                    });
+                });
 
-            //show download dialog
-            AlertDialog logoutDialog = logoutBuilder.create();
-            logoutDialog.setTitle("Logout");
-            logoutDialog.show();
+        //show download dialog
+        AlertDialog logoutDialog = logoutBuilder.create();
+        logoutDialog.setTitle("Logout");
+        logoutDialog.show();
     }
 
 }
