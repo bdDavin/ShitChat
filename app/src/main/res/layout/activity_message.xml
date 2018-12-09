@@ -38,14 +38,11 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/divider"
-        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/image_view_active"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messageToolbar"
-        app:layout_constraintVertical_bias="0.0"
         tools:listitem="@layout/message_item" />
 
 
@@ -101,9 +98,9 @@
         android:layout_width="60dp"
         android:layout_height="30dp"
         android:layout_marginStart="8dp"
-        android:layout_marginBottom="108dp"
+        android:layout_marginBottom="8dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/recyclerView"
+        app:layout_constraintBottom_toBottomOf="@+id/divider"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/typingicon"
         tools:srcCompat="@drawable/typingicon" />
