@@ -9,17 +9,17 @@
     tools:context=".activitys.MessageActivity">
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/cameraButton"
         android:layout_width="46dp"
         android:layout_height="46dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:onClick="addImagePressed"
+        android:background="@color/fui_transparent"
+        android:onClick="cameraButtonPressed"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageButton"
         app:layout_constraintTop_toTopOf="@+id/message_edit"
-        android:visibility="invisible"
         app:srcCompat="@drawable/cameraicon"
         tools:srcCompat="@drawable/cameraicon" />
 
@@ -55,6 +55,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
+        android:background="@color/fui_transparent"
         android:src="@drawable/sendicon"
         android:text="@string/send_Button"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -77,7 +78,7 @@
         android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/send_button"
-        app:layout_constraintStart_toEndOf="@+id/imageButton2"
+        app:layout_constraintStart_toEndOf="@+id/cameraButton"
         app:layout_constraintTop_toBottomOf="@+id/recyclerView"
         app:layout_constraintVertical_bias="0.444" />
 
@@ -88,7 +89,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:background="@color/colorAccent"
+        android:background="@color/fui_transparent"
         android:onClick="addImagePressed"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -3,13 +3,21 @@ package se.shitchat.shitchatapp.activitys;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +35,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -38,7 +48,12 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -58,6 +73,7 @@ public class MessageActivity extends AppCompatActivity {
     private ImageView inputIndicator;
     private MessageAdapter adapter;
     private String imageURL;
+    private ImageButton takePhoto;
 
     //from group
     private String groupId = "kemywcCWdHKO5ESZpSZn";
@@ -65,7 +81,6 @@ public class MessageActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     public static final int PERMISSION_REQUEST_CODE = 1000;
-
 
 
     @Override
@@ -77,7 +92,6 @@ public class MessageActivity extends AppCompatActivity {
         Intent intent = getIntent();
         groupId = intent.getStringExtra("groupId");
         String groupName = intent.getStringExtra("groupName");
-
 
 
         initialization();
@@ -98,10 +112,8 @@ public class MessageActivity extends AppCompatActivity {
 
         //send message when enter key is pushed
         ediMessage.setOnKeyListener((v, keyCode, event) -> {
-            if (event.getAction() == KeyEvent.ACTION_DOWN)
-            {
-                switch (keyCode)
-                {
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                switch (keyCode) {
                     case KeyEvent.KEYCODE_DPAD_CENTER:
                     case KeyEvent.KEYCODE_ENTER:
                         sendButtonPressed();
@@ -123,7 +135,6 @@ public class MessageActivity extends AppCompatActivity {
         });
 
 
-
         //change toolbar to groupname
         setToolbarName();
 
@@ -133,7 +144,7 @@ public class MessageActivity extends AppCompatActivity {
             Log.i("display", "Document has been updated");
             //recieves value from fire store
             Boolean serverValue = Objects.requireNonNull(documentSnapshot).getBoolean("active");
-            Log.i("display", "servervalue is: " +serverValue);
+            Log.i("display", "servervalue is: " + serverValue);
 
 
             //displays indicator
@@ -155,8 +166,7 @@ public class MessageActivity extends AppCompatActivity {
                     //test for groupname
                     if (!Objects.requireNonNull(document.getString("name")).equals("default")) {
                         Objects.requireNonNull(getSupportActionBar()).setTitle(document.getString("name"));
-                    }
-                    else {
+                    } else {
                         //sets name to members
                         ArrayList<String> names = (ArrayList<String>) document.get("userNames");
                         StringBuilder groupName = new StringBuilder();
@@ -229,17 +239,11 @@ public class MessageActivity extends AppCompatActivity {
         sendButton = findViewById(R.id.send_button);
         messageRecycler = findViewById(R.id.recyclerView);
         inputIndicator = findViewById(R.id.image_view_active);
+        takePhoto = findViewById(R.id.cameraButton);
         textChanging();
 
 
-
-
     }
-
-
-
-
-
 
 
     /********************** Is typing *****************************/
@@ -264,14 +268,13 @@ public class MessageActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                 Log.i("display", "My text field has changed");
-                if( count >= 1) {
+                if (count >= 1) {
                     Log.i("display", "I am active");
                     ImActive = true;
                     db.collection("groups").document(groupId).update("active", true);
 
 
-                }
-                else if (count == 0) {
+                } else if (count == 0) {
                     Log.i("display", "I am inactive");
                     ImActive = false;
                     db.collection("groups").document(groupId).update("active", false);
@@ -285,13 +288,12 @@ public class MessageActivity extends AppCompatActivity {
 
     private void displayTyping() {
         Boolean groupIsActive = false;
-        Log.i("display", "displayTyping: im: " +ImActive +" group is: " + groupIsActive);
+        Log.i("display", "displayTyping: im: " + ImActive + " group is: " + groupIsActive);
         if (!ImActive && groupIsActive) {
             Log.i("display", "buble is VISIBLE");
             inputIndicator.setVisibility(View.VISIBLE);
 
-        }
-        else {
+        } else {
             Log.i("display", "buble is GONE");
             inputIndicator.setVisibility(View.GONE);
 
@@ -301,7 +303,6 @@ public class MessageActivity extends AppCompatActivity {
 
     /************************** Sending picture  ************/
     private static final int REQUEST_IMAGE_GALLERY = 1337;
-
 
 
     private void openGallery() {
@@ -314,8 +315,7 @@ public class MessageActivity extends AppCompatActivity {
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     MessageActivity.PERMISSION_REQUEST_CODE);
 
-        }
-        else {
+        } else {
             //open gallery
             Intent i = new Intent(
                     Intent.ACTION_PICK,
@@ -331,14 +331,14 @@ public class MessageActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         //if coming back from gallery or camera load image to message
-        if ((requestCode == REQUEST_IMAGE_GALLERY) && resultCode == RESULT_OK && data != null && data.getData() != null){
+        if ((requestCode == REQUEST_IMAGE_GALLERY) && resultCode == RESULT_OK && data != null && data.getData() != null) {
 
             //get image
             Uri imageUri = data.getData();
 
             //upload image to firestore
             StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-            StorageReference imagesRef = storageRef.child("images/messages/"+groupId +"/"+imageUri.getLastPathSegment());
+            StorageReference imagesRef = storageRef.child("images/messages/" + groupId + "/" + imageUri.getLastPathSegment());
             UploadTask uploadTask = imagesRef.putFile(imageUri);
 
             // Register observers to listen for when the download is done or if it fails
@@ -354,20 +354,146 @@ public class MessageActivity extends AppCompatActivity {
                         }
                     }));
         }
+
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+
+            //Bitmap bmp = intent.getExtras().get("data");
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            Uri uri = getImageUri(getApplicationContext(), photo);
+
+
+/*
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+
+
+            //Bundle extras = data.getExtras();
+            //Bitmap photo = (Bitmap) extras.get("data");
+            //inputIndicator.setImageBitmap(photo);
+            Uri uri = data.getData();
+            Log.i("camera", "onActivityResult: " +uri);
+*/
+
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+            StorageReference imagesRef = storageRef.child("images/messages/" + groupId + "/" + uri);
+            imagesRef.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Toast.makeText(MessageActivity.this, "Upload Finished", Toast.LENGTH_LONG).show();
+                }
+            });
+
+            UploadTask uploadTask = imagesRef.putFile(uri);
+
+            uploadTask.addOnSuccessListener(taskSnapshot -> imagesRef.getDownloadUrl()
+                    .addOnCompleteListener(task -> {
+                        //saves download link
+                        imageURL = task.getResult().toString();
+
+                        //sends image
+                        if (imageURL != null) {
+                            sendButtonPressed();
+                            showImageSnack();
+                        }
+                    }));
+
+
+        }
+
+
     }
 
 
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+    public String getRealPathFromURI(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        return cursor.getString(idx);
+    }
 
 
     /******************* cammera ***************************/
     /* TODO IN PROGRESS */
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
 
+
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    String mCurrentPhotoPath;
+
+
+    // check if device has camera
+    private boolean hasCamera() {
+        return getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
+    }
+
+    // Starting device camera
     private void dispatchTakePictureIntent() {
+
+        if (!hasCamera()) {
+            takePhoto.setEnabled(false);
+        }
+
+        //Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        //startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+
+
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+
+/*
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "se.shitchat.shitchatapp.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
         }
+
+*/
+        }
+    }
+
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void galleryAddPic() {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(mCurrentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
     }
 
 
@@ -396,7 +522,6 @@ public class MessageActivity extends AppCompatActivity {
         message.setUserID(uid);
         message.setName(name);
         message.setCreationDate();
-
 
 
         //adds image
@@ -446,7 +571,7 @@ public class MessageActivity extends AppCompatActivity {
         openGallery();
     }
 
-    public void cameraButtonPressed() {
+    public void cameraButtonPressed(View view) {
         dispatchTakePictureIntent();
     }
 
@@ -459,7 +584,7 @@ public class MessageActivity extends AppCompatActivity {
 
     //En snackbar som vissar vem som är inloggad
     private void showImageSnack() {
-        Snackbar.make(ediMessage, getString(R.string.image_sent) ,
+        Snackbar.make(ediMessage, getString(R.string.image_sent),
                 Snackbar.LENGTH_SHORT)
                 .show();
     }
