@@ -4,7 +4,7 @@
 
         <item
             android:id="@+id/action_add"
-            android:icon="@drawable/ic_add_black_24dp"
+            android:icon="@drawable/addcontacticon"
             android:onClick="searchUsers"
             android:title="@string/profile"
             app:showAsAction="always" />

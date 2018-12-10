@@ -39,10 +39,13 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchHolder> 
 
         holder.username.setText(model.getUsername());
 
+        //displays image
         String userUrl = model.getImage();
         if (userUrl == null || userUrl.equals("default")) {
+            //load default
             holder.userImage.setImageResource(R.drawable.default_profile);
         } else {
+            //LOAD IMAGE
             Picasso.get().load(userUrl).placeholder(R.drawable.default_profile).into(holder.userImage);
         }
 
@@ -111,5 +114,6 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<User, SearchHolder> 
 
         return new SearchHolder(v);
     }
+
 
 }

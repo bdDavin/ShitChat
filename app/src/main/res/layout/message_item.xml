@@ -60,7 +60,7 @@
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/default_message_text_size"
                 android:visibility="gone"
-                android:autoLink="web"
+                android:autoLink="all"
                 tools:text="My name is Timi and I am not a god." />
 
             <android.support.v4.widget.Space

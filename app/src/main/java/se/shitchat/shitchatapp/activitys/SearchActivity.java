@@ -66,14 +66,12 @@ public class SearchActivity extends AppCompatActivity {
             searchInput = input.getText().toString();
             searchClicked();
 
-    userDb = db.collection("users").whereEqualTo("username", searchInput);
+            //works wit lowercase
+    userDb = db.collection("users").whereEqualTo("username".toLowerCase(), searchInput.toLowerCase());
 
     setUpSearchRecycler();
 
     searchAdapter.startListening();
-
-
-
         });
 
     }
@@ -82,6 +80,8 @@ public class SearchActivity extends AppCompatActivity {
     private void searchClicked() {
 
         searchInput = input.getText().toString();
+
+
 
         userDb = db.collection("users").whereEqualTo("username", searchInput);
 

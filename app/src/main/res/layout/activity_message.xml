@@ -9,16 +9,17 @@
     tools:context=".activitys.MessageActivity">
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/cameraButton"
         android:layout_width="46dp"
         android:layout_height="46dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:onClick="addImagePressed"
-        android:visibility="invisible"
+        android:background="@color/fui_transparent"
+        android:onClick="cameraButtonPressed"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageButton"
+        app:layout_constraintTop_toTopOf="@+id/message_edit"
         app:layout_constraintTop_toBottomOf="@+id/divider"
         app:srcCompat="@drawable/cameraicon"
         tools:srcCompat="@drawable/cameraicon" />
@@ -38,7 +39,7 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/divider"
+        app:layout_constraintBottom_toTopOf="@+id/image_view_active"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,10 +51,16 @@
         android:id="@+id/send_button"
         android:layout_width="55dp"
         android:layout_height="55dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/fui_transparent"
         android:src="@drawable/sendicon"
         android:text="@string/send_Button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/message_edit"
+        app:layout_constraintVertical_bias="0.8"
         tools:src="@drawable/sendicon" />
 
     <EditText
@@ -70,8 +77,9 @@
         android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/send_button"
-        app:layout_constraintStart_toEndOf="@+id/imageButton2"
-        app:layout_constraintTop_toBottomOf="@+id/divider" />
+        app:layout_constraintStart_toEndOf="@+id/cameraButton"
+        app:layout_constraintTop_toBottomOf="@+id/divider"
+        app:layout_constraintVertical_bias="0.444" />
 
     <ImageButton
         android:id="@+id/imageButton"
@@ -80,7 +88,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:background="@android:color/white"
+        android:background="@color/fui_transparent"
         android:onClick="addImagePressed"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -93,9 +101,9 @@
         android:layout_width="60dp"
         android:layout_height="30dp"
         android:layout_marginStart="8dp"
-        android:layout_marginBottom="108dp"
+        android:layout_marginBottom="8dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/recyclerView"
+        app:layout_constraintBottom_toBottomOf="@+id/divider"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/typingicon"
         tools:srcCompat="@drawable/typingicon" />
