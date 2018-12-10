@@ -112,8 +112,10 @@ public class MessageActivity extends AppCompatActivity {
 
         //send message when enter key is pushed
         ediMessage.setOnKeyListener((v, keyCode, event) -> {
-            if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                switch (keyCode) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN)
+            {
+                switch (keyCode)
+                {
                     case KeyEvent.KEYCODE_DPAD_CENTER:
                     case KeyEvent.KEYCODE_ENTER:
                         sendButtonPressed();
@@ -144,7 +146,8 @@ public class MessageActivity extends AppCompatActivity {
             Log.i("display", "Document has been updated");
             //recieves value from fire store
             Boolean serverValue = Objects.requireNonNull(documentSnapshot).getBoolean("active");
-            Log.i("display", "servervalue is: " + serverValue);
+            groupIsActive = serverValue;
+            Log.i("display", "servervalue is: " +serverValue);
 
 
             //displays indicator
@@ -285,17 +288,20 @@ public class MessageActivity extends AppCompatActivity {
         });
     }
 
-
+    private Boolean groupIsActive;
     private void displayTyping() {
-        Boolean groupIsActive = false;
-        Log.i("display", "displayTyping: im: " + ImActive + " group is: " + groupIsActive);
+        if (groupIsActive == null) {
+            return;
+        }
+
+        Log.i("display", "displayTyping: im: " +ImActive +" group is: " + groupIsActive);
         if (!ImActive && groupIsActive) {
             Log.i("display", "buble is VISIBLE");
             inputIndicator.setVisibility(View.VISIBLE);
 
         } else {
             Log.i("display", "buble is GONE");
-            inputIndicator.setVisibility(View.GONE);
+            inputIndicator.setVisibility(View.INVISIBLE);
 
         }
     }

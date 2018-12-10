@@ -25,7 +25,7 @@
         tortor.
     </string>
     <string name="image_sent">image sent</string>
-
+    <string name="chat_settings">Chat settings</string>
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
